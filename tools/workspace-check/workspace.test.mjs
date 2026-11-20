@@ -103,7 +103,8 @@ test('[NFR-MNT-01] CI has lint, typecheck, test and build jobs', () => {
   assert.doesNotMatch(workflow, /corepack prepare/u);
   assert.doesNotMatch(workflow, /pnpm@\d/u);
 
-  const jobs = [...workflow.matchAll(/^[ ]{2}([a-z-]+):[\s\S]*?(?=^[ ]{2}[a-z-]+:|(?![\s\S]))/gmu)];
+  const jobsDocument = workflow.slice(workflow.indexOf('jobs:'));
+  const jobs = [...jobsDocument.matchAll(/^[ ]{2}([a-z-]+):\r?\n([\s\S]*?)(?=^[ ]{2}[a-z-]+:|(?![\s\S]))/gmu)];
   for (const [, name, body] of jobs) {
     const enableIndex = body.indexOf('corepack enable');
     const installIndex = body.indexOf('pnpm install --frozen-lockfile');
