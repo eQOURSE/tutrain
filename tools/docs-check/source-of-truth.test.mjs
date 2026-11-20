@@ -9,8 +9,11 @@ function read(relativePath) {
 }
 
 function sectionOf(document, heading) {
-  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
-  return document.match(new RegExp(`^${escapedHeading}[\\s\\S]*?(?=^## |$)`, 'mu'))?.[0] ?? '';
+  const start = document.indexOf(heading);
+  if (start < 0) return '';
+  const remainder = document.slice(start);
+  const nextHeading = remainder.search(/\n## /u);
+  return nextHeading < 0 ? remainder : remainder.slice(0, nextHeading);
 }
 
 function assertHasPhrases(document, phrases) {

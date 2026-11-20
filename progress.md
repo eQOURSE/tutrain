@@ -1,7 +1,7 @@
 # Tutrain Platform v2 - Implementation Progress Plan
 
 Status: Planning baseline
-Last updated: 2026-11-17
+Last updated: 2026-11-20
 Owners: Kartik (Developer A), Bhavesh (Developer B)
 Source of truth: `docs/01-CURRENT-STATE-AUDIT.md`, `docs/02-SRS.md`, `docs/03-ARCHITECTURE.md`, `docs/04-DATA-MODEL.md`, `docs/05-API-CONVENTIONS.md`, `docs/06-ATTENDANCE-RECORDING-PIPELINE.md`, `docs/07-AI-PLATFORM.md`, `docs/08-WEB-SEO-PERFORMANCE.md`, `docs/09-SECURITY-COMPLIANCE.md`, `docs/10-ROADMAP.md`, `docs/11-DEPARTMENT-WORKFLOWS.md`, `AGENTS.md`, `SPECS.md`
 
@@ -18,7 +18,7 @@ Source of truth: `docs/01-CURRENT-STATE-AUDIT.md`, `docs/02-SRS.md`, `docs/03-AR
 
 ## Current repository condition
 
-The current checkout is the legacy Express/MongoDB backend. Per D-003, v2 lives in the new private repository eQOURSE/tutrain; this repo keeps serving production during the migration. The v2 monorepo structure described by the architecture documents does not yet exist in this checkout, and `packages/domain/catalog` is not yet available as the reference module.
+This is the new private repository eQOURSE/tutrain (D-003). It is the source of truth for the v2 documents and for the progress of TTV2-000, TTV2-002 and TTV2-A03 onwards. The documents were imported unchanged from tutrain-backend commit 851227b12ce03bd59779d5de4b4e034edbfa0ea8 on 2026-11-20; tutrain-backend keeps serving production during the migration. TTV2-A01 and TTV2-A02 are tracked in tutrain-backend's progress.md until their PRs finish. The v2 apps and packages don't exist yet; TTV2-A03 creates them, and `packages/domain/catalog` is not yet available as the reference module.
 
 The numbered v2 documents now live in `docs/` with their numbered file names; `AGENTS.md`, `CLAUDE.md`, `SPECS.md` and `progress.md` remain at the repository root. TTV2-001 resolved the documentation path mismatch.
 
@@ -131,11 +131,12 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 ### TTV2-002 - Define ownership and contract boundaries
 
 - Owner: Shared
-- Status: IN_PROGRESS
+- Status: DONE
 - Dependencies: TTV2-000
 - Requirements: NFR-MNT-03; architecture sections 5-6
 - Note: started ahead of TTV2-000 as approved parallel work (SPECS.md §0.2); the ownership map and contracts need none of the business decisions. D-003 now locates v2 in the new private `eQOURSE/tutrain` repository; the outputs live under docs/ until that repository is scaffolded.
 - Drafted: docs/13-OWNERSHIP-AND-CONTRACTS.md and docs/contracts/ (ownership, events, fixtures). DONE when Bhavesh agrees to every proposal.
+- Agreed: Bhavesh Kanoje agreed to every proposal after tutrain-backend #25 merged.
 - Tasks:
   - Create the v2 module ownership map.
   - Create `packages/contracts/<domain>` boundaries.
@@ -151,6 +152,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 
 - Owner: Kartik
 - Status: IN_PROGRESS
+- Tracking: kept current in tutrain-backend's progress.md until this task's PRs finish; this copy is not updated.
 - Dependencies: TTV2-000
 - Requirements: NFR-SEC-01, NFR-SEC-02, NFR-SEC-05; Phase 0 security actions
 - Note: started ahead of TTV2-000 as approved parallel work (SPECS.md §0.2); the Phase 0 fixes need none of the TTV2-000 decisions. Split into three PRs: (1) remove the unused Razorpay integration and lock down the transaction router, audit S3; (2) protect admin and logged-in routes, S2, S5, S6, S9 and S12; (3) tutor password hashing, S4.
@@ -176,6 +178,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 
 - Owner: Kartik
 - Status: IN_PROGRESS
+- Tracking: kept current in tutrain-backend's progress.md until this task's PRs finish; this copy is not updated.
 - Dependencies: TTV2-000
 - Requirements: NFR-SEC-02, NFR-OBS-01, NFR-AV-03
 - Tasks:
@@ -192,8 +195,8 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 #### TTV2-A03 - v2 monorepo and platform scaffold
 
 - Owner: Kartik
-- Status: TODO
-- Dependencies: TTV2-000 (D-001–D-003 recorded), TTV2-002 (waiting for Bhavesh's agreement)
+- Status: IN_PROGRESS
+- Dependencies: TTV2-000 (D-001–D-003 recorded), TTV2-002 (done)
 - Requirements: SPECS group 1; NFR-MNT-01, NFR-MNT-03, NFR-OBS-01
 - Tasks:
   - Create the private repo `eQOURSE/tutrain` (D-003).
@@ -205,6 +208,9 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
   - Add CI for lint, typecheck, test and build.
 - Reading of D-002 used for this plan: the v2 API is a new Express 5 TypeScript app in `eQOURSE/tutrain`; tutrain-backend keeps serving each area until that area is migrated.
 - Acceptance: `pnpm dev` starts the API against local PostgreSQL, and CI rejects invalid boundaries.
+- Progress: repository created; documents imported from tutrain-backend 851227b.
+- CODEOWNERS (task 7): uses the two developers' GitHub accounts, mapped from ownership.json's kartik and bhavesh, as Bhavesh Kanoje decided.
+- Repository protection: eQOURSE is on GitHub Free, so the main/develop ruleset is saved but not enforced on this private repository, and Secret Protection isn't available. Until a plan decision, the controls are review by the other developer and the CI checks docs-check and secret-scan. CODEOWNERS will list owners but won't request reviews.
 
 ### Bhavesh tasks
 

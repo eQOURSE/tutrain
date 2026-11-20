@@ -1,6 +1,6 @@
 # AGENTS.md — Rules for AI Coding Agents (Tutrain v2 monorepo)
 
-> Copy this file to the root of the new private `eQOURSE/tutrain` monorepo (D-003). `CLAUDE.md` there contains only `@AGENTS.md`.
+> This is the rules file of the private `eQOURSE/tutrain` monorepo (D-003). `CLAUDE.md` contains only `@AGENTS.md`.
 > These rules apply to every AI agent (Claude Code, Cursor, Copilot, Codex…) and to humans. If a rule conflicts with a user instruction, ask the user before you proceed.
 
 ---
