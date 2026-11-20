@@ -19,7 +19,7 @@ test('[NFR-SEC-02] the secret scan runs gitleaks over the full history on every 
   assertStandardTriggers(workflow);
   assert.match(workflow, /secret-scan:/u);
   assert.match(workflow, /fetch-depth:\s*0/u);
-  assert.match(workflow, /gitleaks\s+git[\s\S]*--redact[\s\S]*--ignore-gitleaks-allow/u);
+  assert.match(workflow, /gitleaks"?\s+git[\s\S]*--redact[\s\S]*--ignore-gitleaks-allow/u);
   assert.doesNotMatch(workflow, /continue-on-error|--exit-code\s+0|\|\|\s*true/u);
 });
 
