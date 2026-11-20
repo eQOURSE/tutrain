@@ -82,8 +82,20 @@ test('[NFR-MNT-03] an app importing a domain public file passes', () => {
   assertBoundaryPass('apps/web/src/import-domain-public.ts');
 });
 
+test('[NFR-MNT-03] an app importing its own file passes', () => {
+  assertBoundaryPass('apps/web/src/import-own-file.ts');
+});
+
+test('[NFR-MNT-03] a package importing its own file passes', () => {
+  assertBoundaryPass('packages/ui/src/import-own-file.ts');
+});
+
 test('[NFR-MNT-03] an app importing a domain internal file fails', () => {
   assertBoundaryFailure('apps/web/src/import-domain-internal.ts');
+});
+
+test('[NFR-MNT-03] an app importing a domain internal file through its tsconfig path alias fails', () => {
+  assertBoundaryFailure('apps/web/src/import-domain-alias.ts');
 });
 
 test('[NFR-MNT-03] an app importing another app fails', () => {
