@@ -1,0 +1,23 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v1/public/quotes",
+    "body": {
+      "market": "IN",
+      "lines": [{ "product_id": "product-algebra-001", "learner_grade": "8", "qty": 1 }],
+      "promo_code": "WELCOME20"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "lines": [{ "product_id": "product-algebra-001", "quantity": 1, "line_total": { "amount_minor": 249900, "currency": "INR" } }],
+      "subtotal": { "amount_minor": 249900, "currency": "INR" },
+      "discount": { "amount_minor": 49980, "currency": "INR" },
+      "tax": { "amount_minor": 35986, "currency": "INR" },
+      "tax_rate_percent": 18,
+      "promo_percent": 20,
+      "total": { "amount_minor": 235906, "currency": "INR" }
+    }
+  }
+}

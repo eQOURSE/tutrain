@@ -1,0 +1,16 @@
+{
+  "request": { "method": "GET", "path": "/v1/public/catalog/products/algebra-foundations?market=IN" },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "product-algebra-001",
+      "slug": "algebra-foundations",
+      "name": "Algebra Foundations",
+      "description": "A small-group algebra course.",
+      "market": "IN",
+      "price": { "amount_minor": 249900, "currency": "INR" },
+      "taxonomy": { "board": "CBSE", "grade": "8", "subject": "Mathematics" },
+      "status": "published"
+    }
+  }
+}

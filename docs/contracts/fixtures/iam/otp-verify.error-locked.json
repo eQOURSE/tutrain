@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v1/auth/otp:verify",
+    "body": { "challenge_id": "challenge-locked-001", "code": "000000" }
+  },
+  "response": {
+    "status": 429,
+    "body": {
+      "type": "https://docs.tutrain.com/errors/otp-locked",
+      "title": "OTP challenge locked",
+      "status": 429,
+      "code": "OTP_LOCKED",
+      "detail": "The OTP challenge is locked after too many attempts.",
+      "request_id": "request-otp-locked-001"
+    }
+  }
+}

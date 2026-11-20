@@ -1,0 +1,15 @@
+{
+  "request": { "method": "POST", "path": "/v1/learners", "body": { "name": "Example Learner" } },
+  "response": {
+    "status": 422,
+    "body": {
+      "type": "https://docs.tutrain.com/errors/validation",
+      "title": "Validation failed",
+      "status": 422,
+      "code": "VALIDATION_ERROR",
+      "detail": "The request contains invalid fields.",
+      "request_id": "request-validation-001",
+      "errors": [{ "path": "phone", "message": "phone is required" }]
+    }
+  }
+}

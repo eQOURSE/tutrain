@@ -1,0 +1,12 @@
+{
+  "request": { "method": "GET", "path": "/v1/public/catalog?market=AE" },
+  "response": {
+    "status": 200,
+    "body": {
+      "data": [
+        { "id": "product-algebra-001", "slug": "algebra-foundations", "name": "Algebra Foundations", "market": "AE", "price": { "amount_minor": 110000, "currency": "AED" }, "tax_included": false }
+      ],
+      "next_cursor": null
+    }
+  }
+}
