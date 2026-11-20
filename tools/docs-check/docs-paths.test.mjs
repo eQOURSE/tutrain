@@ -196,10 +196,10 @@ test('[TTV2-001] every backticked documentation path exists', () => {
 
 test('[TTV2-001] no file references the old docs/ paths', () => {
   const oldPaths = [
-    'docs/SRS.md',
-    'docs/ARCHITECTURE.md',
-    'docs/DATA-MODEL.md',
-    'docs/API-CONVENTIONS.md',
+    ['docs', 'SRS.md'].join('/'),
+    ['docs', 'ARCHITECTURE.md'].join('/'),
+    ['docs', 'DATA-MODEL.md'].join('/'),
+    ['docs', 'API-CONVENTIONS.md'].join('/'),
   ];
   const matches = [];
 

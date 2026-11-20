@@ -262,10 +262,11 @@ test('[NFR-MNT-03] ownership document matches JSON and lists all proposals', () 
   }
 });
 
-test('[NFR-MNT-03] progress marks TTV2-002 in progress with the contract document', () => {
+test('[NFR-MNT-03] progress marks TTV2-002 done with the contract document', () => {
   const progress = read('progress.md');
   const section = progress.match(/### TTV2-002[\s\S]*?(?=\n### |\n## |$)/u);
   assert.ok(section, 'TTV2-002 section is missing');
-  assert.match(section[0], /- Status: IN_PROGRESS/u);
+  assert.match(section[0], /- Status: DONE/u);
+  assert.match(section[0], /agreed/i);
   assert.match(section[0], /docs\/13-OWNERSHIP-AND-CONTRACTS\.md/u);
 });
