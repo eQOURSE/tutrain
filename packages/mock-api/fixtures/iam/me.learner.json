@@ -1,0 +1,12 @@
+{
+  "request": { "method": "GET", "path": "/v1/me" },
+  "response": {
+    "status": 200,
+    "body": {
+      "user": { "id": "user-learner-001", "role": "learner", "email": "learner@example.test", "phone": "+919000000002" },
+      "roles": ["learner"],
+      "permissions": ["profile:read"],
+      "learners": []
+    }
+  }
+}

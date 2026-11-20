@@ -1,0 +1,6 @@
+{
+  "name": "@tutrain/admin",
+  "private": true,
+  "scripts": { "dev": "next dev -p 4102", "build": "next build", "typecheck": "tsc --noEmit" },
+  "dependencies": { "@tutrain/ui": "workspace:*", "@tutrain/mock-api": "workspace:*", "next": "16.1.6", "react": "19.1.0", "react-dom": "19.1.0" }
+}

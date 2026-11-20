@@ -1,0 +1,17 @@
+{
+  "name": "tutrain-v2-ui-staging",
+  "private": true,
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "dev:web": "pnpm --filter @tutrain/web dev",
+    "dev:app": "pnpm --filter @tutrain/app dev",
+    "dev:admin": "pnpm --filter @tutrain/admin dev",
+    "build": "pnpm --filter @tutrain/web build && pnpm --filter @tutrain/app build && pnpm --filter @tutrain/admin build",
+    "typecheck": "pnpm -r --filter @tutrain/web --filter @tutrain/app --filter @tutrain/admin typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.14",
+    "@types/react": "19.1.8",
+    "typescript": "^5.9.3"
+  }
+}
