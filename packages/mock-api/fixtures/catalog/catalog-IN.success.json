@@ -1,0 +1,12 @@
+{
+  "request": { "method": "GET", "path": "/v1/public/catalog?market=IN" },
+  "response": {
+    "status": 200,
+    "body": {
+      "data": [
+        { "id": "product-algebra-001", "slug": "algebra-foundations", "name": "Algebra Foundations", "market": "IN", "price": { "amount_minor": 249900, "currency": "INR" }, "tax_included": false }
+      ],
+      "next_cursor": null
+    }
+  }
+}

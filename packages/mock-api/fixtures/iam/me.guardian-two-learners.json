@@ -1,0 +1,15 @@
+{
+  "request": { "method": "GET", "path": "/v1/me" },
+  "response": {
+    "status": 200,
+    "body": {
+      "user": { "id": "user-guardian-001", "role": "guardian", "email": "guardian@example.test", "phone": "+919000000001" },
+      "roles": ["guardian"],
+      "permissions": ["profile:read", "learner:read"],
+      "learners": [
+        { "id": "learner-001", "name": "Asha Example", "grade": "8", "status": "active" },
+        { "id": "learner-002", "name": "Kabir Example", "grade": "5", "status": "active" }
+      ]
+    }
+  }
+}
