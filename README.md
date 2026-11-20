@@ -2,7 +2,7 @@
 
 ## What this repository is
 
-Tutrain v2 is a private repository (D-003), an Express 5 TypeScript modular monolith (D-002), using PostgreSQL 16 (D-001).
+This private repository (D-003) holds Tutrain v2, an Express 5 TypeScript modular monolith (D-002) on PostgreSQL 16 (D-001).
 
 ## Source of truth
 
