@@ -28,7 +28,11 @@ export default [
         typescript: {
           alwaysTryTypes: true,
           extensions: ['.js', '.mjs', '.ts', '.tsx'],
-          project: './tsconfig.base.json',
+          project: [
+            './tsconfig.base.json',
+            'apps/*/tsconfig.json',
+            'packages/*/tsconfig.json',
+          ],
         },
       },
       'boundaries/elements': [
@@ -103,6 +107,17 @@ export default [
             {
               from: { element: { type: 'app' } },
               allow: { to: { element: { type: 'package' } } },
+            },
+            {
+              from: { element: { type: 'app' } },
+              allow: {
+                to: {
+                  element: {
+                    type: 'app',
+                    captured: { app: '{{ from.element.captured.app }}' },
+                  },
+                },
+              },
             },
             {
               from: { element: { type: 'app' } },
