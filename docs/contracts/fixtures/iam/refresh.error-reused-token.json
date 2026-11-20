@@ -1,0 +1,14 @@
+{
+  "request": { "method": "POST", "path": "/v1/auth/refresh" },
+  "response": {
+    "status": 401,
+    "body": {
+      "type": "https://docs.tutrain.com/errors/session-reused",
+      "title": "Refresh token reused",
+      "status": 401,
+      "code": "REFRESH_TOKEN_REUSED",
+      "detail": "The session family was revoked after a reused refresh token was detected.",
+      "request_id": "request-refresh-reused-001"
+    }
+  }
+}

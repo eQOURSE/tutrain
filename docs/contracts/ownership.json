@@ -1,0 +1,201 @@
+{
+  "developers": ["kartik", "bhavesh"],
+  "modules": {
+    "iam": {
+      "owner": "kartik",
+      "tables": ["users", "identities", "role_memberships", "roles", "permissions", "sessions", "consents"],
+      "contracts_path": "packages/contracts/iam",
+      "public_api": "packages/domain/iam/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "catalog": {
+      "owner": "kartik",
+      "tables": ["taxonomy_nodes", "products", "price_books", "prices", "promotions"],
+      "contracts_path": "packages/contracts/catalog",
+      "public_api": "packages/domain/catalog/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "crm": {
+      "owner": "bhavesh",
+      "tables": ["leads", "lead_activities", "pipelines", "tasks", "demos", "segments", "campaigns"],
+      "contracts_path": "packages/contracts/crm",
+      "public_api": "packages/domain/crm/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Bhavesh"
+    },
+    "commerce": {
+      "owner": "kartik",
+      "tables": ["carts", "orders", "order_lines", "installments", "refunds"],
+      "contracts_path": "packages/contracts/commerce",
+      "public_api": "packages/domain/commerce/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "billing": {
+      "owner": "kartik",
+      "tables": ["payments", "payment_attempts", "invoices", "credit_notes", "ledger_entries", "gateway_events"],
+      "contracts_path": "packages/contracts/billing",
+      "public_api": "packages/domain/billing/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "tutors": {
+      "owner": "kartik",
+      "tables": ["tutors", "tutor_qualifications", "tutor_approvals", "availability_rules", "availability_exceptions", "applications"],
+      "contracts_path": "packages/contracts/tutors",
+      "public_api": "packages/domain/tutors/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "scheduling": {
+      "owner": "kartik",
+      "tables": ["enrollments", "batches", "batch_members", "session_series", "sessions", "reschedule_requests", "credit_ledger"],
+      "contracts_path": "packages/contracts/scheduling",
+      "public_api": "packages/domain/scheduling/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "classroom": {
+      "owner": "kartik",
+      "tables": ["meet_spaces", "conference_records", "participants", "participant_sessions", "join_tokens"],
+      "contracts_path": "packages/contracts/classroom",
+      "public_api": "packages/domain/classroom/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "attendance": {
+      "owner": "kartik",
+      "tables": ["attendance_records", "attendance_reviews", "unmapped_conferences"],
+      "contracts_path": "packages/contracts/attendance",
+      "public_api": "packages/domain/attendance/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "media": {
+      "owner": "kartik",
+      "tables": ["media_assets", "recordings", "transcripts", "playback_grants"],
+      "contracts_path": "packages/contracts/media",
+      "public_api": "packages/domain/media/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "lms": {
+      "owner": "bhavesh",
+      "tables": ["curriculum_nodes", "learning_plans", "session_logs", "assignments", "submissions", "question_bank", "tests", "attempts", "reports", "ptms", "resources"],
+      "contracts_path": "packages/contracts/lms",
+      "public_api": "packages/domain/lms/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Bhavesh"
+    },
+    "payouts": {
+      "owner": "kartik",
+      "tables": ["rate_cards", "rate_overrides", "earning_entries", "payout_cycles", "payouts"],
+      "contracts_path": "packages/contracts/payouts",
+      "public_api": "packages/domain/payouts/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "support": {
+      "owner": "bhavesh",
+      "tables": ["tickets", "ticket_messages", "sla_policies", "safeguarding_cases"],
+      "contracts_path": "packages/contracts/support",
+      "public_api": "packages/domain/support/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Bhavesh"
+    },
+    "notifications": {
+      "owner": "kartik",
+      "tables": ["templates", "notification_jobs", "deliveries", "preferences"],
+      "contracts_path": "packages/contracts/notifications",
+      "public_api": "packages/domain/notifications/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    },
+    "ai": {
+      "owner": "bhavesh",
+      "tables": ["prompts", "prompt_versions", "ai_calls", "kb_documents", "kb_chunks", "conversations", "messages", "evals"],
+      "contracts_path": "packages/contracts/ai",
+      "public_api": "packages/domain/ai/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Bhavesh"
+    },
+    "analytics": {
+      "owner": "bhavesh",
+      "tables": ["events", "daily_rollups"],
+      "contracts_path": "packages/contracts/analytics",
+      "public_api": "packages/domain/analytics/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Bhavesh"
+    },
+    "audit": {
+      "owner": "kartik",
+      "tables": ["audit_log"],
+      "contracts_path": "packages/contracts/audit",
+      "public_api": "packages/domain/audit/public.ts",
+      "source": "proposed — docs/03-ARCHITECTURE.md §6 and SPECS.md §0.1 TTV2-A04",
+      "status": "proposed"
+    },
+    "config": {
+      "owner": "kartik",
+      "tables": ["settings", "feature_flags", "policies", "holidays", "markets"],
+      "contracts_path": "packages/contracts/config",
+      "public_api": "packages/domain/config/public.ts",
+      "source": "docs/03-ARCHITECTURE.md §6; progress.md — Kartik"
+    }
+  },
+  "extra_producers": {
+    "cms": {
+      "owner": "bhavesh",
+      "path": "apps/web Payload CMS",
+      "source": "proposed — docs/03-ARCHITECTURE.md §5–6",
+      "status": "proposed"
+    }
+  },
+  "paths": {
+    "apps/api": { "owner": "kartik", "reviewers": [], "source": "progress.md — Kartik" },
+    "apps/worker": { "owner": "kartik", "reviewers": [], "source": "D-002 — added later with the first durable job; progress.md — Kartik" },
+    "packages/db": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; shared review rules" },
+    "packages/adapters": { "owner": "kartik", "reviewers": [], "source": "progress.md — Kartik" },
+    "packages/adapters/payments": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "proposed — payment adapter review", "status": "proposed" },
+    "packages/domain/iam": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; auth and child-data review" },
+    "packages/domain/config": { "owner": "kartik", "reviewers": [], "source": "progress.md — Kartik" },
+    "packages/domain/catalog": { "owner": "kartik", "reviewers": [], "source": "progress.md — Kartik" },
+    "packages/domain/notifications": { "owner": "kartik", "reviewers": [], "source": "progress.md — Kartik" },
+    "packages/domain/commerce": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; payment review" },
+    "packages/domain/billing": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; payment and ledger review" },
+    "packages/domain/tutors": { "owner": "kartik", "reviewers": [], "source": "progress.md — Kartik" },
+    "packages/domain/scheduling": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; ledger and child-data review" },
+    "packages/domain/classroom": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; participant identity and recording artefact review" },
+    "packages/domain/attendance": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; recording and child-data review" },
+    "packages/domain/media": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; recording review" },
+    "packages/domain/payouts": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "progress.md — Kartik; ledger review" },
+    "infra": { "owner": "kartik", "reviewers": [], "source": "progress.md — Kartik" },
+    "apps/web": { "owner": "bhavesh", "reviewers": [], "source": "D-002 — added later as the public surface migrates; progress.md — Bhavesh" },
+    "apps/app": { "owner": "bhavesh", "reviewers": [], "source": "D-002 — added later as the portal surface migrates; progress.md — Bhavesh" },
+    "apps/admin": { "owner": "bhavesh", "reviewers": [], "source": "D-002 — added later as the admin surface migrates; progress.md — Bhavesh" },
+    "packages/ui": { "owner": "bhavesh", "reviewers": [], "source": "progress.md — Bhavesh" },
+    "packages/seo": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "proposed — progress.md; missing from docs/03-ARCHITECTURE.md §5", "status": "proposed" },
+    "packages/domain/crm": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "progress.md — Bhavesh; child-data review" },
+    "packages/domain/ai": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "progress.md — Bhavesh; AI prompt review" },
+    "packages/domain/lms": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "progress.md — Bhavesh; child-data review" },
+    "packages/domain/support": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "progress.md — Bhavesh; safeguarding and child-data review" },
+    "packages/domain/analytics": { "owner": "bhavesh", "reviewers": [], "source": "progress.md — Bhavesh" },
+    "packages/domain/audit": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "proposed — docs/03-ARCHITECTURE.md §6; TTV2-A04", "status": "proposed" },
+    "apps/api/src/modules/<module>": { "owner": "module", "reviewers": ["kartik", "bhavesh"], "source": "proposed — AGENTS.md §2; resolved per module owner", "scope": "module owner", "status": "proposed" },
+    "apps/worker/src/jobs/<module>": { "owner": "module", "reviewers": ["kartik", "bhavesh"], "source": "D-002 — added later with the first durable job; AGENTS.md §2; resolved per module owner", "scope": "module owner", "status": "proposed" },
+    "packages/db/schema/<module>.ts": { "owner": "module", "reviewers": ["kartik", "bhavesh"], "source": "proposed — AGENTS.md §2; resolved per module owner", "scope": "module owner", "status": "proposed" },
+    "packages/adapters/llm": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "proposed — AGENTS.md §2 rule 10; ai module", "status": "proposed" },
+    "packages/adapters/embeddings": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "proposed — AGENTS.md §2 rule 10; ai module", "status": "proposed" },
+    "packages/db/migrations": { "owner": "generated", "reviewers": ["kartik", "bhavesh"], "source": "proposed — drizzle-kit journal conflict rule", "rule": "Rebase onto develop and regenerate before merging; merge one migration PR at a time.", "status": "proposed" },
+    "packages/config": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "proposed — tooling ownership gap", "status": "proposed" },
+    "packages/config/tailwind": { "owner": "bhavesh", "reviewers": ["kartik"], "source": "proposed — Tailwind preset ownership gap", "status": "proposed" },
+    "packages/testing": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "proposed — testing ownership gap", "rule": "Fixtures under packages/testing/fixtures/<module> belong to that module's owner.", "status": "proposed" },
+    "packages/contracts/events/<module>": { "owner": "module", "reviewers": ["kartik", "bhavesh"], "source": "proposed — producing module owns its event contracts", "scope": "producing module owner", "status": "proposed" },
+    "packages/api-client": { "owner": "generated", "reviewers": ["kartik", "bhavesh"], "source": "proposed — AGENTS.md rule 14", "status": "proposed" },
+    "packages/contracts/openapi.json": { "owner": "generated", "reviewers": ["kartik", "bhavesh"], "source": "proposed — AGENTS.md rule 14", "status": "proposed" },
+    "apps": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "proposed — both developers own an app under apps/" },
+    "packages": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "docs/03-ARCHITECTURE.md §5" },
+    "packages/domain": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "docs/03-ARCHITECTURE.md §5" },
+    "packages/contracts": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "docs/03-ARCHITECTURE.md §5; AGENTS.md §2" },
+    ".github/workflows": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "proposed — CI ownership gap", "status": "proposed" },
+    "turbo.json": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "deferred by D-002; add only if Turborepo is justified", "status": "deferred" },
+    "pnpm-workspace.yaml": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "proposed — root build ownership gap", "status": "proposed" },
+    "package.json": { "owner": "kartik", "reviewers": ["bhavesh"], "source": "proposed — root build ownership gap", "status": "proposed" },
+    "docs/": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "progress.md — shared rules" },
+    "AGENTS.md": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "proposed — shared documentation" },
+    "CLAUDE.md": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "proposed — shared documentation" },
+    "SPECS.md": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "proposed — shared documentation" },
+    "progress.md": { "owner": "shared", "reviewers": ["kartik", "bhavesh"], "source": "proposed — shared documentation" }
+  },
+  "rules": {
+    "module_scoped_paths": "apps/api/src/modules/<module>, apps/worker/src/jobs/<module> and packages/db/schema/<module>.ts resolve to the owning developer of the named module.",
+    "module_fixture_paths": "packages/testing/fixtures/<module> resolves to the owning developer of the named module.",
+    "migration_merge": "Rebase onto develop and regenerate before merging; merge one migration PR at a time."
+  }
+}

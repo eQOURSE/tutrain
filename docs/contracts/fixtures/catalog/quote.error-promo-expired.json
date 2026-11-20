@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v1/public/quotes",
+    "body": { "market": "IN", "lines": [{ "product_id": "product-algebra-001", "learner_grade": "8", "qty": 1 }], "promo_code": "OLD20" }
+  },
+  "response": {
+    "status": 422,
+    "body": {
+      "type": "https://docs.tutrain.com/errors/promo-expired",
+      "title": "Promotion expired",
+      "status": 422,
+      "code": "PROMO_EXPIRED",
+      "detail": "The promotion is no longer active.",
+      "request_id": "request-promo-expired-001"
+    }
+  }
+}

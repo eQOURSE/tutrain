@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v1/auth/otp:verify",
+    "body": { "challenge_id": "challenge-guardian-001", "code": "123456" }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "set-cookie": [
+        "__Host-tt_at=fake-access-token; HttpOnly; Secure; SameSite=Lax; Path=/",
+        "__Host-tt_rt=fake-refresh-token; HttpOnly; Secure; SameSite=Lax; Path=/v1/auth"
+      ]
+    },
+    "body": {
+      "user": { "id": "user-guardian-001", "role": "guardian", "phone": "+919000000001", "email": "guardian@example.test" },
+      "session_id": "session-guardian-001"
+    }
+  }
+}

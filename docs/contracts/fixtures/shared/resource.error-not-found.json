@@ -1,0 +1,14 @@
+{
+  "request": { "method": "GET", "path": "/v1/learners/learner-404" },
+  "response": {
+    "status": 404,
+    "body": {
+      "type": "https://docs.tutrain.com/errors/not-found",
+      "title": "Resource not found",
+      "status": 404,
+      "code": "NOT_FOUND",
+      "detail": "The requested resource was not found.",
+      "request_id": "request-not-found-001"
+    }
+  }
+}

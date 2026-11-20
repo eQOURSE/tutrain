@@ -1,0 +1,1 @@
+{"name":"tutrain","private":true,"description":"Tutrain v2 monorepo","engines":{"node":">=22"},"scripts":{"test:docs":"node --test \"tools/docs-check/*.test.mjs\""}}

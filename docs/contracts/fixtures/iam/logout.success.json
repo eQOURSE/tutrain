@@ -1,0 +1,4 @@
+{
+  "request": { "method": "POST", "path": "/v1/auth/logout", "body": { "all_devices": false } },
+  "response": { "status": 204 }
+}

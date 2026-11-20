@@ -1,0 +1,11 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v1/auth/otp:send",
+    "body": { "channel": "whatsapp", "destination": "+919000000001", "purpose": "login" }
+  },
+  "response": {
+    "status": 200,
+    "body": { "challenge_id": "challenge-guardian-001", "expires_at": "2026-11-17T10:05:00Z", "channel": "whatsapp" }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v1/public/quotes",
+    "body": { "market": "IN", "lines": [{ "product_id": "product-algebra-001", "learner_grade": "8", "qty": 1 }], "promo_code": "ONCE20" }
+  },
+  "response": {
+    "status": 422,
+    "body": {
+      "type": "https://docs.tutrain.com/errors/promo-limit-reached",
+      "title": "Promotion limit reached",
+      "status": 422,
+      "code": "PROMO_LIMIT_REACHED",
+      "detail": "This promotion has reached its per-user redemption limit.",
+      "request_id": "request-promo-limit-001"
+    }
+  }
+}
