@@ -47,9 +47,11 @@ test('[NFR-SEC-02] every workflow has a read-only token and actions pinned to a 
     const workflow = readWorkflow(name);
     assert.match(workflow, /^permissions:\s*\r?\n\s+contents:\s*read/m, name);
     assert.doesNotMatch(workflow, /:\s*write\b|pull_request_target/u, name);
-    const usesLines = workflow.split(/\r?\n/u).filter((line) => /^\s*-\s+uses:/u.test(line));
+    const usesLines = workflow.split(/\r?\n/u).filter((line) => /^\s*(?:-\s+)?uses:/u.test(line));
     assert.ok(usesLines.length > 0, name);
-    for (const line of usesLines) assert.match(line, /uses:\s+[\w.-]+\/[\w.-]+@[0-9a-f]{40}\s+#\s+v\S+/u, line);
-    assert.match(workflow, /uses:\s+actions\/checkout@[0-9a-f]{40}[\s\S]*?persist-credentials:\s*false/u, name);
+    for (const line of usesLines) assert.match(line, /^\s*(?:-\s+)?uses:\s+[\w.-]+\/[\w.-]+@[0-9a-f]{40}\s+#\s+v\S+\s*$/u, line);
+    const checkoutUses = usesLines.filter((line) => /uses:\s+actions\/checkout@/u.test(line)).length;
+    const credentialOptOuts = workflow.match(/persist-credentials:\s*false/g) ?? [];
+    assert.ok(credentialOptOuts.length >= checkoutUses, `${name}: every checkout must disable persisted credentials`);
   }
 });
