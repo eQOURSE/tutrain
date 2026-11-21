@@ -1,10 +1,12 @@
 import { once } from 'node:events';
 import { spawnSync } from 'node:child_process';
+import { createServer } from 'node:http';
+import { readdirSync, readFileSync } from 'node:fs';
 import { Writable } from 'node:stream';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import express from 'express';
+import express, { Router } from 'express';
 import type { Logger } from 'pino';
 import { describe, expect, it } from 'vitest';
 import { healthLiveResponseSchema, problemDetailsSchema } from '@tutrain/contracts/shared';
@@ -45,6 +47,21 @@ async function problem(response: Response): Promise<Record<string, unknown>> {
 }
 
 describe('API entry point', () => {
+  it('[SPECS §1] only the dev script reads apps/api/.env', () => {
+    const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+    const packageJson = JSON.parse(readFileSync(path.join(apiRoot, 'package.json'), 'utf8')) as {
+      scripts: { dev?: string };
+    };
+    expect(packageJson.scripts.dev).toBe('tsx watch --env-file-if-exists=.env src/main.ts');
+
+    const sourceFiles = readdirSync(path.join(apiRoot, 'src'), { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.ts'))
+      .map((entry) => path.join(entry.parentPath, entry.name));
+    for (const sourceFile of sourceFiles) {
+      expect(readFileSync(sourceFile, 'utf8'), sourceFile).not.toContain('loadEnvFile');
+    }
+  });
+
   it('[SPECS §1] a missing NODE_ENV and an invalid PORT are reported by name, with no values, and main exits with code 1', () => {
     const environment = { ...process.env };
     delete environment.NODE_ENV;
@@ -62,6 +79,24 @@ describe('API entry point', () => {
     expect(`${result.stdout}${result.stderr}`).toMatch(/NODE_ENV/u);
     expect(`${result.stdout}${result.stderr}`).toMatch(/PORT/u);
     expect(`${result.stdout}${result.stderr}`).not.toContain('70000');
+  });
+
+  it('[SPECS §1] main exits with code 1 when the port is already in use', async () => {
+    const blocker = createServer().listen(0);
+    await once(blocker, 'listening');
+    const port = (blocker.address() as AddressInfo).port;
+    const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+    const environment = { ...process.env, NODE_ENV: 'test', PORT: String(port), LOG_LEVEL: 'info' };
+    const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/main.ts'], {
+      cwd: apiRoot,
+      encoding: 'utf8',
+      env: environment,
+      timeout: 15000,
+    });
+    blocker.close();
+
+    expect(result.status).toBe(1);
+    expect(`${result.stdout}${result.stderr}`).not.toContain('API listening');
   });
 
   it('[SPECS §1 AC2] an unhandled error returns 500 Problem Details with request_id and no stack or error message', async () => {
@@ -162,6 +197,70 @@ describe('API entry point', () => {
       expect(capture.text()).not.toContain('secret-password');
       expect(capture.text()).not.toContain('secret-cookie');
       expect(capture.text()).not.toContain('secret-authorization');
+    } finally {
+      await close(server);
+    }
+  });
+
+  it('[NFR-OBS-01] the request log shows the full path for a route in a mounted router', async () => {
+    const capture = captureLogs();
+    const router = Router();
+    router.get('/log', (_request, response) => response.json({ ok: true }));
+    const app = createApp({
+      logger: capture.logger,
+      registerRoutes: (instance) => instance.use('/v1/test', router),
+    });
+    const server = await listen(app);
+    try {
+      const response = await fetch(`${baseUrl(server)}/v1/test/log?x=1`);
+      expect(response.status).toBe(200);
+      const line = capture.text().trim().split('\n').map((value) => JSON.parse(value) as Record<string, unknown>)[0];
+      expect(line.path).toBe('/v1/test/log');
+    } finally {
+      await close(server);
+    }
+  });
+
+  it('[SPECS §1 AC2] an HttpProblem the schema rejects still returns the fixed 500 Problem Details', async () => {
+    const app = createApp({
+      logger: captureLogs().logger,
+      registerRoutes: (instance) => {
+        instance.get('/test/invalid-problem', () => {
+          throw new HttpProblem(200, 'not a code', 'Bad', 'Bad');
+        });
+      },
+    });
+    const server = await listen(app);
+    try {
+      const response = await fetch(`${baseUrl(server)}/test/invalid-problem`);
+      const body = await problem(response);
+      expect(response.status).toBe(500);
+      expect(body.code).toBe('INTERNAL_ERROR');
+      expect(JSON.stringify(body)).not.toContain('stack');
+    } finally {
+      await close(server);
+    }
+  });
+
+  it('[SPECS §1 AC2] an unsupported JSON charset returns 415 Problem Details', async () => {
+    const capture = captureLogs();
+    const app = createApp({
+      logger: capture.logger,
+      registerRoutes: (instance) => {
+        instance.post('/test/charset', (_request, response) => response.json({ ok: true }));
+      },
+    });
+    const server = await listen(app);
+    try {
+      const response = await fetch(`${baseUrl(server)}/test/charset`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json; charset=latin1' },
+        body: '{}',
+      });
+      const body = await problem(response);
+      expect(response.status).toBe(415);
+      expect(problemDetailsSchema.parse(body).code).toBe('UNSUPPORTED_MEDIA_TYPE');
+      expect(capture.text()).not.toContain('unhandled request error');
     } finally {
       await close(server);
     }
