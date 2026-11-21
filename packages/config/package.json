@@ -1,0 +1,20 @@
+{
+  "name": "@tutrain/config",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./env": "./env.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}
