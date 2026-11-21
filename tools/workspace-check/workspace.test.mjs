@@ -45,7 +45,7 @@ function assertBoundaryPass(relativePath) {
 test('[NFR-MNT-01] the root workspace exposes lint, typecheck, test and build scripts', () => {
   const manifest = packageJson();
 
-  assert.equal(manifest.engines.node, '>=22');
+  assert.equal(manifest.engines.node, '^22.12.0 || ^24.0.0 || >=26.0.0');
   assert.equal(manifest.packageManager, 'pnpm@10.34.9');
   for (const script of ['lint', 'typecheck', 'test', 'build']) assert.equal(typeof manifest.scripts[script], 'string', script);
 });

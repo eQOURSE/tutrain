@@ -23,7 +23,7 @@
 ### 2.1 Identity and sessions
 - Customers: OTP (WhatsApp/SMS/email), magic link, Google OIDC. Optional password (argon2id, breached-password check through k-anonymity).
 - Staff and tutors: Google Workspace SSO only, with 2-step verification enforced in Workspace. Admin console sessions last 8 h with re-auth for sensitive actions (refund approval, payout approval, role changes, data export).
-- Access token 15 min (JWT, `EdDSA`, `kid` rotation). Refresh token 30 days with rotation and reuse detection (revoke the whole family). `__Host-` cookies, HttpOnly, Secure, SameSite=Lax.
+- Access token 15 min (JWT, `EdDSA`, `kid` rotation). Refresh token 30 days with rotation and reuse detection (revoke the whole family). Access cookie `__Host-tt_at` (Path=/) and refresh cookie `__Secure-tt_rt` (Path=/v1/auth), both HttpOnly, Secure and SameSite=Lax. The refresh cookie can't use the `__Host-` prefix because that prefix requires `Path=/`.
 - Device/session management page. "Log out everywhere".
 
 ### 2.2 Authorisation

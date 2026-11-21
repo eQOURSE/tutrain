@@ -1,0 +1,25 @@
+{
+  "name": "@tutrain/contracts",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./shared": "./shared/index.ts",
+    "./iam": "./iam/index.ts",
+    "./catalog": "./catalog/index.ts",
+    "./iam/fixtures/*": "./iam/fixtures/*",
+    "./catalog/fixtures/*": "./catalog/fixtures/*",
+    "./shared/fixtures/*": "./shared/fixtures/*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}

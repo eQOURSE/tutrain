@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(testDirectory, '..', '..');
 const contractsDirectory = path.join(repositoryRoot, 'docs', 'contracts');
+const fixturesDirectory = path.join(repositoryRoot, 'packages', 'contracts');
 
 function read(relativePath) {
   return readFileSync(path.join(repositoryRoot, relativePath), 'utf8');
@@ -50,7 +51,7 @@ function architectureEvents() {
   return events;
 }
 
-function fixtureFiles(directory = path.join(contractsDirectory, 'fixtures'), prefix = '') {
+function fixtureFiles(directory, prefix = '') {
   const files = [];
   for (const name of readdirSync(directory, { withFileTypes: true })) {
     const relative = path.join(prefix, name.name);
@@ -58,6 +59,14 @@ function fixtureFiles(directory = path.join(contractsDirectory, 'fixtures'), pre
     else if (name.isFile() && name.name.endsWith('.json')) files.push(relative.replaceAll(path.sep, '/'));
   }
   return files;
+}
+
+function contractFixtureFiles() {
+  return readdirSync(fixturesDirectory, { withFileTypes: true }).flatMap((module) => {
+    if (!module.isDirectory()) return [];
+    const directory = path.join(fixturesDirectory, module.name, 'fixtures');
+    return existsSync(directory) ? fixtureFiles(directory, `${module.name}/fixtures`) : [];
+  });
 }
 
 function endpointPatterns() {
@@ -94,6 +103,23 @@ function allStrings(value) {
     if (typeof child === 'string') strings.push(child);
   });
   return strings;
+}
+
+function fixtureSetCookies() {
+  return contractFixtureFiles().flatMap((relativePath) => {
+    const fixture = readJson(path.join('packages/contracts', relativePath));
+    return (fixture.response.headers?.['set-cookie'] ?? []).map((header) => ({ relativePath, header }));
+  });
+}
+
+function parseCookieHeader(header) {
+  const [pair, ...rawAttributes] = header.split(';').map((part) => part.trim());
+  const [name] = pair.split('=', 1);
+  const attributes = new Map(rawAttributes.map((attribute) => {
+    const [key, ...value] = attribute.split('=');
+    return [key.toLowerCase(), value.join('=') || true];
+  }));
+  return { name, attributes };
 }
 
 const expectedGaps = [
@@ -209,11 +235,12 @@ test('[NFR-MNT-03] every documented event consumer is present in the catalogue',
 
 test('[NFR-MNT-03] fixtures match endpoint, JSON, money, error, list and fake-identity rules', () => {
   assert.equal(existsSync(contractsDirectory), true, 'docs/contracts is missing');
+  assert.equal(existsSync(fixturesDirectory), true, 'packages/contracts is missing');
   const patterns = endpointPatterns();
-  const fixtures = fixtureFiles();
+  const fixtures = contractFixtureFiles();
   assert.ok(fixtures.length > 0, 'no fixtures found');
   for (const relativePath of fixtures) {
-    const fixture = readJson(path.join('docs/contracts/fixtures', relativePath));
+    const fixture = readJson(path.join('packages/contracts', relativePath));
     assert.match(fixture.request.method, /^(GET|POST|PATCH|DELETE)$/u);
     assert.ok(patterns.some((pattern) => pathMatchesPattern(fixture.request.path.split('?')[0], pattern)), `${relativePath} has an undocumented endpoint`);
     for (const body of [fixture.request.body, fixture.response.body]) {
@@ -236,10 +263,43 @@ test('[NFR-MNT-03] fixtures match endpoint, JSON, money, error, list and fake-id
       if (body && Array.isArray(body.data)) assert.ok(Object.hasOwn(body, 'next_cursor'), `${relativePath} list has no next_cursor`);
     }
   }
-  const quote = readJson('docs/contracts/fixtures/catalog/quote.success-promo-gst.json').response.body;
+  const quote = readJson('packages/contracts/catalog/fixtures/quote.success-promo-gst.json').response.body;
   const lineTotal = quote.lines.reduce((sum, line) => sum + line.line_total.amount_minor, 0);
   assert.equal(lineTotal, quote.subtotal.amount_minor);
   assert.equal(quote.subtotal.amount_minor - quote.discount.amount_minor + quote.tax.amount_minor, quote.total.amount_minor);
+});
+
+test('[FR-IAM-02] fixture cookies are HttpOnly, Secure and SameSite=Lax and follow the cookie prefix rules', () => {
+  for (const { relativePath, header } of fixtureSetCookies()) {
+    const { name, attributes } = parseCookieHeader(header);
+    assert.ok(attributes.has('httponly'), `${relativePath} ${name} is not HttpOnly`);
+    assert.ok(attributes.has('secure'), `${relativePath} ${name} is not Secure`);
+    assert.equal(attributes.get('samesite'), 'Lax', `${relativePath} ${name} is not SameSite=Lax`);
+    if (name.startsWith('__Host-')) {
+      assert.equal(attributes.get('path'), '/', `${relativePath} ${name} must use Path=/`);
+      assert.equal(attributes.has('domain'), false, `${relativePath} ${name} must not set Domain`);
+    } else if (attributes.get('path') !== '/') {
+      assert.match(name, /^__Secure-/u, `${relativePath} ${name} must use the __Secure- prefix`);
+    }
+  }
+});
+
+test('[FR-IAM-08] a refresh sets a new access cookie and a new refresh cookie', () => {
+  const fixture = readJson('packages/contracts/iam/fixtures/refresh.success.json');
+  assert.deepEqual(fixture.response.headers['set-cookie'], [
+    '__Host-tt_at=fake-rotated-access-token; HttpOnly; Secure; SameSite=Lax; Path=/',
+    '__Secure-tt_rt=fake-rotated-refresh-token; HttpOnly; Secure; SameSite=Lax; Path=/v1/auth',
+  ]);
+});
+
+test('[FR-IAM-02] the API and security documents name the same session cookies', () => {
+  const apiConventions = read('docs/05-API-CONVENTIONS.md');
+  const securityCompliance = read('docs/09-SECURITY-COMPLIANCE.md');
+  assert.match(apiConventions, /__Host-tt_at/u);
+  assert.match(apiConventions, /__Secure-tt_rt/u);
+  assert.match(securityCompliance, /__Host-tt_at/u);
+  assert.match(securityCompliance, /__Secure-tt_rt/u);
+  assert.doesNotMatch(securityCompliance, /`__Host-` cookies/u);
 });
 
 test('[NFR-MNT-03] ownership document matches JSON and lists all proposals', () => {
