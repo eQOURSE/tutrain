@@ -65,7 +65,9 @@ test('[TTV2-A03] the import is complete and the legacy-only documents stay behin
   for (const relativePath of ['AGENTS.md', 'CLAUDE.md', 'SPECS.md', 'progress.md', 'docs/contracts/ownership.json', 'docs/contracts/events.json']) {
     assert.equal(fs.existsSync(`${repositoryRoot}/${relativePath}`), true, relativePath);
   }
-  assert.equal(fs.statSync(`${repositoryRoot}/docs/contracts/fixtures`).isDirectory(), true);
+  for (const module of ['iam', 'catalog', 'shared']) {
+    assert.equal(fs.statSync(`${repositoryRoot}/packages/contracts/${module}/fixtures`).isDirectory(), true, `${module} fixtures are missing`);
+  }
   for (let number = 1; number <= 13; number += 1) {
     const prefix = String(number).padStart(2, '0');
     assert.ok(fs.readdirSync(`${repositoryRoot}/docs`).some((name) => name.startsWith(`${prefix}-`)), `docs/${prefix} document is missing`);

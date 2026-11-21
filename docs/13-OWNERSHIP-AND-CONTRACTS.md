@@ -1,6 +1,6 @@
 # 13 — Ownership and Contracts
 
-This document is the human-readable companion to [ownership.json](./contracts/ownership.json) and [events.json](./contracts/events.json). The mock responses currently live under `docs/contracts/fixtures/`; TTV2-A03 will move them into the v2 contract packages.
+This document is the human-readable companion to [ownership.json](./contracts/ownership.json) and [events.json](./contracts/events.json). The mock responses live under `packages/contracts/<module>/fixtures/` and are part of the v2 contract packages.
 
 ## Ownership map
 
@@ -100,7 +100,7 @@ The ownership rules deliberately leave module-scoped API controllers, worker job
 
 ## Mock fixtures
 
-Fixtures live now under `docs/contracts/fixtures/<module>/`. TTV2-A03 moves them to `packages/contracts/<module>/fixtures`; Bhavesh's mock API layer in TTV2-B02 loads them from there. TTV2-A05 and TTV2-A06 keep their real responses matching the fixtures, or update the fixtures in the same PR when a contract changes.
+Fixtures live under `packages/contracts/<module>/fixtures/`; Bhavesh's mock API layer in TTV2-B02 loads them from there through `@tutrain/contracts`. TTV2-A05 and TTV2-A06 keep their real responses matching the fixtures, or update the fixtures in the same PR when a contract changes.
 
 The fixtures cover IAM OTP, sessions and role views; catalogue markets, products, taxonomy and quotes; and shared 404 and 422 Problem Details responses. All fixture people and contact values are synthetic.
 

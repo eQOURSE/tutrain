@@ -4,7 +4,7 @@
   "description": "Tutrain v2 monorepo",
   "packageManager": "pnpm@10.34.9",
   "engines": {
-    "node": ">=22"
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
     "lint": "eslint .",
