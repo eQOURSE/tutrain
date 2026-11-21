@@ -292,6 +292,16 @@ test('[FR-IAM-08] a refresh sets a new access cookie and a new refresh cookie', 
   ]);
 });
 
+test('[FR-IAM-02] the API and security documents name the same session cookies', () => {
+  const apiConventions = read('docs/05-API-CONVENTIONS.md');
+  const securityCompliance = read('docs/09-SECURITY-COMPLIANCE.md');
+  assert.match(apiConventions, /__Host-tt_at/u);
+  assert.match(apiConventions, /__Secure-tt_rt/u);
+  assert.match(securityCompliance, /__Host-tt_at/u);
+  assert.match(securityCompliance, /__Secure-tt_rt/u);
+  assert.doesNotMatch(securityCompliance, /`__Host-` cookies/u);
+});
+
 test('[NFR-MNT-03] ownership document matches JSON and lists all proposals', () => {
   const ownership = readJson('docs/contracts/ownership.json');
   const document = read('docs/13-OWNERSHIP-AND-CONTRACTS.md');
