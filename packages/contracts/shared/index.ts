@@ -26,6 +26,12 @@ export type ProblemDetails = z.infer<typeof problemDetailsSchema>;
 export const healthLiveResponseSchema = z.strictObject({ status: z.literal('ok') });
 export type HealthLiveResponse = z.infer<typeof healthLiveResponseSchema>;
 
+export const healthReadyResponseSchema = z.strictObject({
+  status: z.literal('ok'),
+  checks: z.strictObject({ database: z.literal('up') }),
+});
+export type HealthReadyResponse = z.infer<typeof healthReadyResponseSchema>;
+
 export function cursorPageSchema<T extends z.ZodType>(itemSchema: T) {
   return z.strictObject({ data: z.array(itemSchema), next_cursor: z.string().nullable() });
 }
