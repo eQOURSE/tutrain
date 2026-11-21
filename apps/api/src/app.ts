@@ -37,6 +37,24 @@ function problemType(code: string): string {
   return `https://docs.tutrain.com/errors/${code.toLowerCase().replaceAll('_', '-')}`;
 }
 
+function clientErrorStatus(error: unknown): number | undefined {
+  if (!error || typeof error !== 'object') return undefined;
+  if (!('expose' in error) || error.expose !== true || !('status' in error)) return undefined;
+  return typeof error.status === 'number' && Number.isInteger(error.status) && error.status >= 400 && error.status <= 499
+    ? error.status
+    : undefined;
+}
+
+function fixedClientProblem(status: number): HttpProblem {
+  if (status === 415) {
+    return new HttpProblem(415, 'UNSUPPORTED_MEDIA_TYPE', 'Unsupported media type', 'The request media type is not supported.');
+  }
+  if (status === 400) {
+    return new HttpProblem(400, 'BAD_REQUEST', 'Bad request', 'The request is invalid.');
+  }
+  return new HttpProblem(status, 'CLIENT_ERROR', 'Client error', 'The request could not be processed.');
+}
+
 function errorHandler(logger: Logger): ErrorRequestHandler {
   return (error: unknown, request, response, next) => {
     void next;
@@ -47,21 +65,40 @@ function errorHandler(logger: Logger): ErrorRequestHandler {
       problem = new HttpProblem(413, 'PAYLOAD_TOO_LARGE', 'Payload too large', 'The request body exceeds 100 kB.');
     } else if (error instanceof HttpProblem) {
       problem = error;
+    } else if (clientErrorStatus(error) !== undefined) {
+      problem = fixedClientProblem(clientErrorStatus(error) as number);
     } else {
       const unknownError = error instanceof Error ? error : new Error('Unknown error');
       logger.error({ request_id: requestId(request), err: unknownError }, 'unhandled request error');
       problem = new HttpProblem(500, 'INTERNAL_ERROR', 'Internal server error', 'An internal server error occurred.');
     }
 
-    const body = problemDetailsSchema.parse({
+    const candidate = {
       type: problemType(problem.code),
       title: problem.title,
       status: problem.status,
       code: problem.code,
       detail: problem.detail,
       request_id: requestId(request),
-    });
-    response.status(problem.status).type('application/problem+json').send(body);
+    };
+    const parsed = problemDetailsSchema.safeParse(candidate);
+    const body = parsed.success
+      ? parsed.data
+      : problemDetailsSchema.parse({
+          type: problemType('INTERNAL_ERROR'),
+          title: 'Internal server error',
+          status: 500,
+          code: 'INTERNAL_ERROR',
+          detail: 'An internal server error occurred.',
+          request_id: requestId(request),
+        });
+    if (!parsed.success) {
+      logger.error(
+        { request_id: requestId(request), problem_code: problem.code, problem_status: problem.status },
+        'invalid HttpProblem',
+      );
+    }
+    response.status(parsed.success ? problem.status : 500).type('application/problem+json').send(body);
   };
 }
 
@@ -80,7 +117,7 @@ export function createApp(options: AppOptions = {}): Express {
         {
           request_id: requestWithId.requestId,
           method: request.method,
-          path: request.path,
+          path: request.originalUrl.split('?')[0],
           status: response.statusCode,
           duration_ms: Math.round(performance.now() - startedAt),
         },

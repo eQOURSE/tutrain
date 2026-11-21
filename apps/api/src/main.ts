@@ -1,23 +1,28 @@
-import { existsSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { createApp, shutdownServer } from './app.js';
 import { parseApiEnv } from './env.js';
 import { createLogger } from './logger.js';
 
-function loadLocalEnv(): void {
-  const localEnvPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.env');
-  if (process.env.NODE_ENV !== 'production' && existsSync(localEnvPath)) process.loadEnvFile(localEnvPath);
+function errorCode(error: unknown): string | undefined {
+  if (!error || typeof error !== 'object' || !('code' in error)) return undefined;
+  return typeof error.code === 'string' ? error.code : undefined;
 }
 
 async function start(): Promise<void> {
   try {
-    loadLocalEnv();
     const env = parseApiEnv();
     const logger = createLogger(process.stdout, env.LOG_LEVEL);
     const app = createApp({ logger });
-    const server = app.listen(env.PORT, () => {
+    const server = app.listen(env.PORT, (error?: Error) => {
+      if (error) {
+        logger.fatal({ error_name: error.name, error_code: errorCode(error) }, 'API failed to listen');
+        process.exit(1);
+        return;
+      }
       logger.info({ port: env.PORT }, 'API listening');
+    });
+    server.once('error', (error: Error) => {
+      logger.fatal({ error_name: error.name, error_code: errorCode(error) }, 'API failed to listen');
+      process.exit(1);
     });
     const stop = () => {
       void shutdownServer(server).then(() => process.exit(0));

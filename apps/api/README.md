@@ -1,6 +1,6 @@
 # `@tutrain/api`
 
-The API reads these local variables from `apps/api/.env` during development. The file is ignored and must never contain production credentials:
+Only `pnpm dev` reads these local variables from `apps/api/.env`. The file is ignored and must never contain production credentials. Staging and production servers receive their variables from the process environment:
 
 ```dotenv
 NODE_ENV=development
