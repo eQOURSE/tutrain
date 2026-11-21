@@ -99,7 +99,7 @@ function specsTaskRows(specs) {
     specs
       .split(/\r?\n/u)
       .map((line) => line.split('|').map((cell) => cell.trim()))
-      .filter((cells) => cells.length === 6 && /^`?TTV2-[A-Z0-9-]+`?$/u.test(cells[1]))
+      .filter((cells) => cells.length === 7 && /^`?TTV2-[A-Z0-9-]+`?$/u.test(cells[1]))
       .map((cells) => [cells[1].replaceAll('`', ''), cells[5]]),
   );
 }

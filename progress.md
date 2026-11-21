@@ -97,22 +97,15 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 ### TTV2-000 - Confirm implementation decisions
 
 - Owner: Shared
-- Status: IN_PROGRESS
+- Status: DONE
 - Dependencies: None
 - Requirements: SRS assumptions and sign-off requirements
 - Decision log: docs/12-DECISION-LOG.md, drafted 2026-11-17 and updated 2026-11-18. D-001, D-002 and D-003 are recorded as approved by Bhavesh Kanoje; the remaining decisions stay Proposed until their owners decide them.
 - Stage 1 needs only D-001, D-002 and D-003 (Tech Lead).
 - Recorded 2026-11-18: D-001 Approved, D-002 Approved with changes, D-003 Approved, decided by Bhavesh Kanoje. D-004 to D-025 remain Proposed.
-- Tasks:
-  - Approve PostgreSQL as the system of record.
-  - Choose the primary domestic and international payment gateways.
-  - Choose the WhatsApp BSP.
-  - Choose Anthropic API or Bedrock for LLM hosting.
-  - Approve refund, late-cancel, no-show, attendance and tutor penalty policies.
-  - Approve payout cycle, rate override and TDS treatment.
-  - Approve recording retention and transcript visibility.
-  - Record each decision owner, effective date and system impact.
-- Exit criteria: Decision log approved by the responsible business owners.
+- Delivered: D-001 to D-003 approved and recorded; D-004 to D-025 are in docs/12-DECISION-LOG.md with their owners, and each is linked to the tasks that need it.
+- Exit criteria: Stage 1 decisions D-001 to D-003 are approved and every other decision is in the decision log with its owner and the tasks that need it.
+- Note: Closed with Bhavesh Kanoje's agreement on 2026-11-21. D-004 to D-025 stay Proposed; each gates the work that depends on it (SPECS §0.2). Independent work can continue.
 
 ### TTV2-001 - Normalize v2 documentation paths
 
@@ -268,6 +261,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Kartik
 - Status: TODO
 - Dependencies: TTV2-A04
+- Decisions needed: D-021 (Tech Lead). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-IAM-01..10
 - Tasks:
   - Implement OTP send and verify.
@@ -299,6 +293,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Kartik
 - Status: TODO
 - Dependencies: TTV2-A05, TTV2-A04
+- Decisions needed: D-007 (Marketing Head; Tech Lead). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-SUP-05, FR-SCH-07
 - Tasks:
   - Define notification channel interfaces.
@@ -315,6 +310,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Bhavesh
 - Status: TODO
 - Dependencies: TTV2-B02, TTV2-A06 contract
+- Decisions needed: D-022 (Tech Lead; Marketing Head). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-WEB-01..10, NFR-PERF-01, NFR-PERF-02, NFR-UX-01
 - Tasks:
   - Add Payload CMS collections and publishing workflow.
@@ -330,6 +326,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Bhavesh
 - Status: TODO
 - Dependencies: TTV2-B02, TTV2-A05 contract, TTV2-A06 contract
+- Decisions needed: D-024 (Tech Lead; Marketing Head). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-CRM-01..09
 - Tasks:
   - Implement CRM domain contracts and UI.
@@ -349,6 +346,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Kartik
 - Status: TODO
 - Dependencies: TTV2-A06, TTV2-A07, TTV2-A04
+- Decisions needed: D-004 (Finance Head; Director / Super Admin), D-005 (Finance Head; Director / Super Admin), D-006 (Finance Head), D-009 (Finance Head; Director / Super Admin). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-COM-05..10, FR-FIN-01, FR-FIN-02, FR-FIN-08
 - Tasks:
   - Implement orders, order lines and instalments.
@@ -380,6 +378,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Bhavesh
 - Status: TODO
 - Dependencies: TTV2-B03, TTV2-B04, TTV2-A06 contract, TTV2-A09 contract
+- Decisions needed: D-007 (Marketing Head; Tech Lead), D-008 (Tech Lead; Director / Super Admin), D-025 (Tech Lead). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-BOT-01..10, NFR-AV-04, NFR-COST-01
 - Tasks:
   - Implement AI gateway integration through the approved adapter.
@@ -428,6 +427,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Kartik
 - Status: TODO
 - Dependencies: TTV2-A08, TTV2-A10, TTV2-A07
+- Decisions needed: D-010 (Operations Head), D-011 (Operations Head; Finance Head). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-SCH-01..10
 - Tasks:
   - Implement enrolments, batches and session series.
@@ -443,6 +443,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Kartik
 - Status: TODO
 - Dependencies: TTV2-A11
+- Decisions needed: D-019 (Tech Lead), D-020 (Tech Lead). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-SCH-02, FR-SCH-03, FR-ATT-01..03, FR-ATT-09
 - Tasks:
   - Complete the Meet API and Workspace Events spike first.
@@ -458,6 +459,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Kartik
 - Status: TODO
 - Dependencies: TTV2-A12, TTV2-A11
+- Decisions needed: D-008 (Tech Lead; Director / Super Admin), D-011 (Operations Head; Finance Head), D-012 (Operations Head), D-013 (Operations Head; Finance Head), D-017 (Director / Super Admin; Operations Head), D-018 (Director / Super Admin; Operations Head), D-023 (Tech Lead). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-ATT-01..12, NFR-PERF-05, NFR-PRV-04
 - Tasks:
   - Implement conference-to-session matching.
@@ -478,6 +480,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Bhavesh
 - Status: TODO
 - Dependencies: TTV2-B02, TTV2-A05 contracts, TTV2-A11 contracts
+- Decisions needed: D-018 (Director / Super Admin; Operations Head). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-IAM-04, FR-SCH-06, FR-ATT-07, FR-ATT-11, NFR-UX-02
 - Tasks:
   - Implement guardian home and child switching.
@@ -514,6 +517,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Owner: Kartik
 - Status: TODO
 - Dependencies: TTV2-A13
+- Decisions needed: D-011 (Operations Head; Finance Head), D-013 (Operations Head; Finance Head), D-014 (Finance Head), D-015 (Finance Head), D-016 (Finance Head). Proposed; each gates the work that depends on it (SPECS §0.2).
 - Requirements: FR-FIN-05, FR-FIN-06, FR-FIN-08
 - Tasks:
   - Implement rate cards and override precedence.
