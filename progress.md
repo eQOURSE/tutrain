@@ -209,6 +209,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Reading of D-002 used for this plan: the v2 API is a new Express 5 TypeScript app in `eQOURSE/tutrain`; tutrain-backend keeps serving each area until that area is migrated.
 - Acceptance: `pnpm dev` starts the API against local PostgreSQL, and CI rejects invalid boundaries.
 - Progress: repository created; documents imported from tutrain-backend 851227b.
+- Progress: workspace, strict TypeScript base, boundary linting and CI are in the `chore/a03-workspace` PR.
 - CODEOWNERS (task 7): uses the two developers' GitHub accounts, mapped from ownership.json's kartik and bhavesh, as Bhavesh Kanoje decided.
 - Repository protection: eQOURSE is on GitHub Free, so the main/develop ruleset is saved but not enforced on this private repository, and Secret Protection isn't available. Until a plan decision, the controls are review by the other developer and the CI checks docs-check and secret-scan. CODEOWNERS will list owners but won't request reviews.
 

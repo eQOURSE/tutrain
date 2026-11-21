@@ -200,7 +200,7 @@ test('[NFR-MNT-03] architecture emits and consumes are in the event catalogue', 
 
 test('[NFR-MNT-03] every documented event consumer is present in the catalogue', () => {
   const events = readJson('docs/contracts/events.json');
-  for (const { module, kind, shortName } of architectureEvents().filter((event) => event.kind === 'consumes')) {
+  for (const { module, shortName } of architectureEvents().filter((event) => event.kind === 'consumes')) {
     const event = events.find((candidate) => candidate.name === shortName || candidate.short_name === shortName);
     assert.ok(event, `missing event for consumer ${module}: ${shortName}`);
     assert.ok(event.consumers.includes(module), `${module} is missing as a consumer of ${shortName}`);
