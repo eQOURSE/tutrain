@@ -7,7 +7,9 @@
     "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
-    "dev": "pnpm --filter @tutrain/api dev",
+    "dev": "docker compose up -d --wait postgres && pnpm --filter @tutrain/api dev",
+    "db:up": "docker compose up -d --wait postgres",
+    "dev:api": "pnpm --filter @tutrain/api dev",
     "lint": "eslint .",
     "typecheck": "pnpm -r --if-present typecheck",
     "test:docs": "node --test \"tools/docs-check/*.test.mjs\"",

@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16.16-alpine@sha256:1d5b02d3a9941fbd52437db4107f8c52d6297dac553ca1e5c299ebb3756b4857
+    environment:
+      POSTGRES_USER: tutrain
+      POSTGRES_PASSWORD: tutrain
+      POSTGRES_DB: tutrain
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - tutrain-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tutrain -d tutrain"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+volumes:
+  tutrain-postgres:

@@ -210,6 +210,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Acceptance: `pnpm dev` starts the API against local PostgreSQL, and CI rejects invalid boundaries.
 - Progress: repository created; documents imported from tutrain-backend 851227b.
 - Progress: workspace, strict TypeScript base, boundary linting and CI are in the `chore/a03-workspace` PR.
+- Progress: `compose.yaml` runs local PostgreSQL 16; `packages/db` provides the pool and readiness check; `/v1/health/ready` and `pnpm dev` against the database are in the `chore/a03-local-postgres` PR.
 - Progress: apps/api has the Express 5 entry point, env validation, request IDs, Problem Details errors, redacting logs and `/v1/health/live` in the `chore/a03-api` PR.
 - Progress: packages/contracts holds the iam, catalog and shared schemas and the B02 fixtures in the `chore/a03-contracts` PR.
 - CODEOWNERS (task 7): uses the two developers' GitHub accounts, mapped from ownership.json's kartik and bhavesh, as Bhavesh Kanoje decided.

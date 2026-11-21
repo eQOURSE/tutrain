@@ -3,6 +3,7 @@ import type { Server } from 'node:http';
 import express, { type ErrorRequestHandler, type Express, type Request } from 'express';
 import type { Logger } from 'pino';
 import { problemDetailsSchema } from '@tutrain/contracts/shared';
+import type { DatabaseCheckResult } from '@tutrain/db/client';
 import { createLogger } from './logger.js';
 import { healthRouter } from './platform/health.routes.js';
 
@@ -11,18 +12,24 @@ export class HttpProblem extends Error {
   readonly code: string;
   readonly title: string;
   readonly detail: string;
+  readonly errors?: Array<{ path: string; message: string }>;
 
-  constructor(status: number, code: string, title: string, detail: string) {
+  constructor(status: number, code: string, title: string, detail: string, errors?: Array<{ path: string; message: string }>) {
     super(detail);
     this.name = 'HttpProblem';
     this.status = status;
     this.code = code;
     this.title = title;
     this.detail = detail;
+    this.errors = errors;
   }
 }
 
-export type AppOptions = { logger?: Logger; registerRoutes?: (app: Express) => void };
+export type AppOptions = {
+  logger?: Logger;
+  checkReadiness?: () => Promise<DatabaseCheckResult>;
+  registerRoutes?: (app: Express) => void;
+};
 type RequestWithId = Request & { requestId: string };
 
 function requestId(request: Request): string {
@@ -80,6 +87,7 @@ function errorHandler(logger: Logger): ErrorRequestHandler {
       code: problem.code,
       detail: problem.detail,
       request_id: requestId(request),
+      ...(problem.errors ? { errors: problem.errors } : {}),
     };
     const parsed = problemDetailsSchema.safeParse(candidate);
     const body = parsed.success
@@ -128,7 +136,12 @@ export function createApp(options: AppOptions = {}): Express {
   });
 
   app.use(express.json({ limit: '100kb' }));
-  app.use(healthRouter);
+  app.use(
+    healthRouter({
+      logger,
+      checkReadiness: options.checkReadiness ?? (async () => ({ ok: false, error_name: 'NotConfigured' })),
+    }),
+  );
   options.registerRoutes?.(app);
   app.use((_request, _response, next) => {
     next(new HttpProblem(404, 'NOT_FOUND', 'Not found', 'The requested resource was not found.'));

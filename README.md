@@ -12,6 +12,18 @@ AGENTS.md, CLAUDE.md, SPECS.md, progress.md, docs/ and docs/contracts/ live here
 
 The legacy code, its architecture document and secret inventory, and A01/A02 progress stay in tutrain-backend until those PRs finish.
 
+## Local development
+
+Use Node 22.12+ or Node 24, enable Corepack, install Docker and pnpm, then run `pnpm install`. Create `apps/api/.env` from [apps/api/README.md](./apps/api/README.md), including the local `DATABASE_URL`, and run `pnpm dev`. The `pnpm dev` script starts PostgreSQL with `docker compose up -d --wait postgres` before starting the API. `pnpm db:up` starts only PostgreSQL, while `pnpm dev:api` starts only the API. `docker compose down` stops PostgreSQL and keeps the named volume.
+
+On Windows when Docker runs only in WSL, run Docker Compose from WSL in the repository folder, then start the API with `pnpm dev:api`:
+
+```sh
+cd /mnt/f/projects/tutrain
+docker compose up -d --wait postgres
+pnpm dev:api
+```
+
 ## How changes merge
 
 Every change goes through a pull request into develop, needs one approval from the other developer, and merges with a merge commit. The organisation is on GitHub Free, so GitHub doesn't enforce these rules or the required checks on this private repository. They are a team agreement: don't merge without the other developer's approval or with a failing check.
