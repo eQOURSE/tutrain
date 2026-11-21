@@ -34,7 +34,7 @@ The task IDs below are the execution plan for the two-developer implementation. 
 
 | Task ID | Owner | Scope | Requirement / story reference | Depends on |
 |---|---|---|---|---|
-| `TTV2-000` | Shared | Confirm database, gateway, WhatsApp, LLM, class policy, payout policy and recording-policy decisions | SRS assumptions; README decisions | — |
+| `TTV2-000` | Shared | Record the Stage 1 decisions (D-001 to D-003) and keep the decision log, with each decision's owner and the tasks that need it | SRS assumptions; README decisions | — |
 | `TTV2-001` | Kartik | Normalize documentation paths and make all specification references resolvable | AGENTS.md §1; architecture §5 | TTV2-000 |
 | `TTV2-002` | Shared | Define module ownership, contract folders, event boundaries and mock API fixtures | NFR-MNT-03; architecture §5–6 | TTV2-000 |
 | `TTV2-A01` | Kartik | Legacy payment binding, authentication hardening, password migration and destructive-endpoint protection | NFR-SEC-01, NFR-SEC-02, NFR-SEC-05; Phase 0 | TTV2-000 |
@@ -43,21 +43,21 @@ The task IDs below are the execution plan for the two-developer implementation. 
 | `TTV2-B01` | Bhavesh | Legacy frontend/deployment safety support and surface-boundary documentation | NFR-SEC-01, NFR-SEC-04, NFR-AV-03; Phase 0 | TTV2-000 |
 | `TTV2-B02` | Bhavesh | Web/app/admin shells, shared UI, route placeholders, state handling and mock API layer | NFR-UX-01, NFR-UX-02, NFR-MNT-03 | TTV2-002, TTV2-A03 |
 | `TTV2-A04` | Kartik | Drizzle schema foundation, migrations, transactions, outbox, audit, idempotency and processed events | SPECS group 2; NFR-SEC-05, NFR-OBS-01 | TTV2-A03 |
-| `TTV2-A05` | Kartik | OTP, Google/Workspace SSO, access/refresh sessions, RBAC, scopes, guardianship and consents | FR-IAM-01..10 | TTV2-A04 |
+| `TTV2-A05` | Kartik | OTP, Google/Workspace SSO, access/refresh sessions, RBAC, scopes, guardianship and consents | FR-IAM-01..10 | TTV2-A04; decisions D-021 |
 | `TTV2-A06` | Kartik | Taxonomy, markets, products, price books, promotions, quote engine and configuration events | FR-COM-01..04, FR-WEB-04 | TTV2-A05 |
-| `TTV2-A07` | Kartik | Notification templates, preferences, quiet hours, suppression, dedupe and provider adapters | FR-SUP-05, FR-SCH-07 | TTV2-A05, TTV2-A04 |
-| `TTV2-B03` | Bhavesh | Payload CMS, public site, landing templates, redirects, SEO, structured data and consent analytics | FR-WEB-01..10; NFR-PERF-01/02; NFR-UX-01 | TTV2-B02, TTV2-A06 contract |
-| `TTV2-B04` | Bhavesh | CRM leads, dedupe, assignment, SLA, timeline, demos, proposals and follow-up workflows | FR-CRM-01..09 | TTV2-B02, TTV2-A05/A06 contracts |
-| `TTV2-A08` | Kartik | Orders, instalments, payments, verified webhooks, invoices, GST, refunds and financial ledger | FR-COM-05..10, FR-FIN-01..02, FR-FIN-08 | TTV2-A06, TTV2-A07, TTV2-A04 |
+| `TTV2-A07` | Kartik | Notification templates, preferences, quiet hours, suppression, dedupe and provider adapters | FR-SUP-05, FR-SCH-07 | TTV2-A05, TTV2-A04; decisions D-007 |
+| `TTV2-B03` | Bhavesh | Payload CMS, public site, landing templates, redirects, SEO, structured data and consent analytics | FR-WEB-01..10; NFR-PERF-01/02; NFR-UX-01 | TTV2-B02, TTV2-A06 contract; decisions D-022 |
+| `TTV2-B04` | Bhavesh | CRM leads, dedupe, assignment, SLA, timeline, demos, proposals and follow-up workflows | FR-CRM-01..09 | TTV2-B02, TTV2-A05/A06 contracts; decisions D-024 |
+| `TTV2-A08` | Kartik | Orders, instalments, payments, verified webhooks, invoices, GST, refunds and financial ledger | FR-COM-05..10, FR-FIN-01..02, FR-FIN-08 | TTV2-A06, TTV2-A07, TTV2-A04; decisions D-004, D-005, D-006, D-009 |
 | `TTV2-A09` | Kartik | Stable demo-slot and availability contract with atomic slot holds for CRM/AI integration | FR-CRM-05, FR-TUT-03, FR-TUT-04 | TTV2-A06, TTV2-A07 |
-| `TTV2-B05` | Bhavesh | AI gateway, prompt registry, knowledge sync, grounded tools, consent card, handoff and fallback | FR-BOT-01..10; NFR-AV-04; NFR-COST-01 | TTV2-B03, TTV2-B04, TTV2-A06/A09 contracts |
+| `TTV2-B05` | Bhavesh | AI gateway, prompt registry, knowledge sync, grounded tools, consent card, handoff and fallback | FR-BOT-01..10; NFR-AV-04; NFR-COST-01 | TTV2-B03, TTV2-B04, TTV2-A06/A09 contracts; decisions D-007, D-008, D-025 |
 | `TTV2-B06` | Bhavesh | Website-to-CRM conversion, chatbot lead capture, proposals, payment-link UI and attribution | FR-WEB-03, FR-CRM-05, FR-BOT-04, FR-BOT-06 | TTV2-B04, TTV2-B05, TTV2-A08 contract |
 | `TTV2-A10` | Kartik | Tutor applications, profiles, approval matrix, availability, leave and matching | FR-TUT-01..07 | TTV2-A05, TTV2-A06 |
-| `TTV2-A11` | Kartik | Enrolments, batches, RRULE series, sessions, credits, policy evaluation and reminders | FR-SCH-01..10 | TTV2-A08, TTV2-A10, TTV2-A07 |
-| `TTV2-A12` | Kartik | Meet spaces, calendar events, join tokens, Workspace Events and reconciliation intake | FR-SCH-02/03, FR-ATT-01..03, FR-ATT-09 | TTV2-A11 |
-| `TTV2-A13` | Kartik | Conference matching, participant identity, attendance, outcomes, recordings, transcripts and media | FR-ATT-01..12; NFR-PERF-05; NFR-PRV-04 | TTV2-A12, TTV2-A11 |
-| `TTV2-A14` | Kartik | Rate cards, earning snapshots, payout cycles, TDS, statements, approval and adjustments | FR-FIN-05..06, FR-FIN-08 | TTV2-A13 |
-| `TTV2-B07` | Bhavesh | Guardian, learner and tutor portals: schedule, join, credits, recordings, learning and earnings | FR-IAM-04, FR-SCH-06, FR-ATT-07/11, NFR-UX-02 | TTV2-B02, TTV2-A05/A11/A13 contracts |
+| `TTV2-A11` | Kartik | Enrolments, batches, RRULE series, sessions, credits, policy evaluation and reminders | FR-SCH-01..10 | TTV2-A08, TTV2-A10, TTV2-A07; decisions D-010, D-011 |
+| `TTV2-A12` | Kartik | Meet spaces, calendar events, join tokens, Workspace Events and reconciliation intake | FR-SCH-02/03, FR-ATT-01..03, FR-ATT-09 | TTV2-A11; decisions D-019, D-020 |
+| `TTV2-A13` | Kartik | Conference matching, participant identity, attendance, outcomes, recordings, transcripts and media | FR-ATT-01..12; NFR-PERF-05; NFR-PRV-04 | TTV2-A12, TTV2-A11; decisions D-008, D-011, D-012, D-013, D-017, D-018, D-023 |
+| `TTV2-A14` | Kartik | Rate cards, earning snapshots, payout cycles, TDS, statements, approval and adjustments | FR-FIN-05..06, FR-FIN-08 | TTV2-A13; decisions D-011, D-013, D-014, D-015, D-016 |
+| `TTV2-B07` | Bhavesh | Guardian, learner and tutor portals: schedule, join, credits, recordings, learning and earnings | FR-IAM-04, FR-SCH-06, FR-ATT-07/11, NFR-UX-02 | TTV2-B02, TTV2-A05/A11/A13 contracts; decisions D-018 |
 | `TTV2-B08` | Bhavesh | Operations and staff consoles: onboarding, live board, reviews, unmapped conferences and audit | FR-ADM-01..04, FR-ATT-08/09, FR-SCH-08 | TTV2-B04, TTV2-A10/A11/A13 contracts |
 | `TTV2-B09` | Bhavesh | Curriculum, learning plans, session logs, recaps, homework, tests, reports and PTMs | FR-LMS-01..09 | TTV2-B07, TTV2-A13 contract |
 | `TTV2-B10` | Bhavesh | Support inbox, SLAs, linked records, notification preferences and safeguarding | FR-SUP-01..05, NFR-PRV-02, NFR-PRV-05 | TTV2-B07, TTV2-A05/A07 contracts |
@@ -71,6 +71,7 @@ The task IDs below are the execution plan for the two-developer implementation. 
 - A task may be marked `IN_PROGRESS` only after its dependencies are `DONE` or explicitly approved as parallel work.
 - A task may be marked `DONE` only when its linked acceptance criteria, tests, review and generated artifacts are complete.
 - A task that requires an unapproved business policy or vendor choice must remain `BLOCKED`.
+- An open decision gates only the work that depends on it. Independent work on the task can continue, for example B03's local Payload CMS work while D-022 is Proposed.
 - Migration tasks must remain repeatable and idempotent; no production backfill or destructive operation is implied by this registry.
 
 ### 0.3 Functional requirement task index
@@ -130,7 +131,7 @@ These tasks do not belong exclusively to FR or NFR. They establish the project d
 
 | Task ID | Owner | Cross-cutting purpose |
 |---|---|---|
-| `TTV2-000` | Shared | Leadership decisions and policy approvals required before implementation |
+| `TTV2-000` | Shared | Record the Stage 1 decisions (D-001 to D-003) and keep the decision log, with each decision's owner and the tasks that need it |
 | `TTV2-001` | Kartik | Documentation path and specification reference normalization |
 | `TTV2-002` | Shared | Module ownership, contract boundaries, event contracts and mock fixtures |
 

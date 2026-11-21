@@ -78,6 +78,95 @@ function field(section, label) {
   return match[1].trim();
 }
 
+function summaryRows(log) {
+  const summary = log.slice(0, log.indexOf('### D-001'));
+  return [...summary.matchAll(/^\| (D-\d{3}) \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|$/gmu)].map(
+    ([, id, decision, owner, neededBy, status]) => ({ id, decision, owner, neededBy, status: status.trim() }),
+  );
+}
+
+function progressTaskSections(progress) {
+  const headings = [...progress.matchAll(/^#### (TTV2-[A-Z0-9-]+) .+$/gmu)];
+  return headings.map((heading, index) => {
+    const bodyStart = heading.index + heading[0].length;
+    const bodyEnd = headings[index + 1]?.index ?? progress.length;
+    return { id: heading[1], body: progress.slice(bodyStart, bodyEnd) };
+  });
+}
+
+function specsTaskRows(specs) {
+  return new Map(
+    specs
+      .split(/\r?\n/u)
+      .map((line) => line.split('|').map((cell) => cell.trim()))
+      .filter((cells) => cells.length === 7 && /^`?TTV2-[A-Z0-9-]+`?$/u.test(cells[1]))
+      .map((cells) => [cells[1].replaceAll('`', ''), cells[5]]),
+  );
+}
+
+test('[TTV2-000] TTV2-000 is DONE and closes on the Stage 1 decisions', () => {
+  const progress = read('progress.md');
+  const section = progress.match(/### TTV2-000[\s\S]*?(?=\n### |\n## |$)/u);
+  assert.ok(section, 'TTV2-000 section is missing');
+  assert.match(section[0], /- Status: DONE/u);
+  assert.match(
+    section[0],
+    /Exit criteria: Stage 1 decisions D-001 to D-003 are approved and every other decision is in the decision log with its owner and the tasks that need it\./u,
+  );
+  for (const row of summaryRows(decisionLog()).filter(({ id }) => ['D-001', 'D-002', 'D-003'].includes(id))) {
+    assert.match(row.status, /^Approved(?: with changes)?$/u, `${row.id} is not approved`);
+  }
+});
+
+test('[TTV2-000] every proposed decision is linked from each task that needs it', () => {
+  const log = decisionLog();
+  const progress = read('progress.md');
+  const tasks = new Map(progressTaskSections(progress).map((section) => [section.id, section.body]));
+  const specs = specsTaskRows(read('SPECS.md'));
+  const proposed = summaryRows(log).filter(({ status }) => status === 'Proposed');
+  const expectedByTask = new Map();
+
+  for (const decision of proposed) {
+    for (const taskId of decision.neededBy.matchAll(/TTV2-[A-Z0-9-]+/gu)) {
+      const task = taskId[0];
+      expectedByTask.set(task, [...(expectedByTask.get(task) ?? []), decision.id]);
+      assert.ok(tasks.has(task), `${task} section is missing`);
+      assert.match(tasks.get(task), new RegExp(`^- Decisions needed:.*\\b${decision.id}\\b`, 'mu'), `${task} does not name ${decision.id}`);
+      assert.match(specs.get(task) ?? '', new RegExp(`\\b${decision.id}\\b`, 'u'), `${task} does not depend on ${decision.id}`);
+    }
+  }
+
+  for (const [task, body] of tasks) {
+    const line = body.match(/^- Decisions needed: (.+)$/mu);
+    if (!line) continue;
+    for (const decisionId of line[1].matchAll(/D-\d{3}/gu)) {
+      assert.ok(expectedByTask.get(task)?.includes(decisionId[0]), `${task} names ${decisionId[0]} without needing it`);
+    }
+  }
+});
+
+test('[TTV2-000] D-004 to D-025 stay Proposed', () => {
+  const log = decisionLog();
+  const rows = summaryRows(log);
+  for (let index = 4; index <= 25; index += 1) {
+    const id = `D-${String(index).padStart(3, '0')}`;
+    const row = rows.find((candidate) => candidate.id === id);
+    assert.equal(row?.status, 'Proposed', `${id} summary status changed`);
+    const section = sections(log).find((candidate) => candidate.id === id);
+    assert.equal(field(section, 'Status'), 'Proposed');
+    assert.equal(field(section, 'Decision'), '');
+    assert.equal(field(section, 'Decided by'), '');
+    assert.equal(field(section, 'Effective date'), '');
+  }
+});
+
+test('[TTV2-000] SPECS §0.2 says an open decision gates only the work that depends on it', () => {
+  assert.match(
+    read('SPECS.md'),
+    /^- An open decision gates only the work that depends on it\. Independent work on the task can continue, for example B03's local Payload CMS work while D-022 is Proposed\.$/mu,
+  );
+});
+
 test('[TTV2-000] the decision log has the 25 decisions in order', () => {
   const actual = sections(decisionLog());
   assert.deepEqual(
@@ -169,10 +258,10 @@ test('[TTV2-000] the summary table matches section IDs and statuses', () => {
   assert.deepEqual(summaryRows, expected);
 });
 
-test('[TTV2-000] progress marks the decision log in progress', () => {
+test('[TTV2-000] progress marks the decision log done', () => {
   const progress = read('progress.md');
   const section = progress.match(/### TTV2-000[\s\S]*?(?=\n### |\n## |$)/u);
   assert.ok(section, 'TTV2-000 section is missing');
-  assert.match(section[0], /- Status: IN_PROGRESS/u);
+  assert.match(section[0], /- Status: DONE/u);
   assert.match(section[0], /docs\/12-DECISION-LOG\.md/u);
 });

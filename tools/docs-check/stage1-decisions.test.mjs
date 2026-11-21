@@ -123,7 +123,7 @@ test("[TTV2-000] updates the roadmap, ownership deferrals and progress plan", ()
     const progress = read("progress.md");
     const ttv2 = progressSection(progress, "TTV2-000");
     assert.match(ttv2, /Recorded 2026-11-18: D-001 Approved, D-002 Approved with changes, D-003 Approved, decided by Bhavesh Kanoje/u);
-    assert.match(ttv2, /Status: IN_PROGRESS/u);
+    assert.match(ttv2, /Status: DONE/u);
     assert.match(progress, /new private repository eQOURSE\/tutrain[\s\S]*keeps serving production during the migration/u);
 
     const a03 = progressSection(progress, "TTV2-A03");
