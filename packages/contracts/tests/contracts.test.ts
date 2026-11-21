@@ -77,6 +77,12 @@ function readFixture(relativePath: string): {
   };
 }
 
+function objectKeys(value: unknown): string[] {
+  if (Array.isArray(value)) return value.flatMap(objectKeys);
+  if (!value || typeof value !== 'object') return [];
+  return Object.entries(value).flatMap(([key, child]) => [key, ...objectKeys(child)]);
+}
+
 describe('contract fixtures', () => {
   it('[NFR-MNT-03] maps every fixture file to request and status response schemas', () => {
     expect(Object.keys(fixtureTable).sort()).toEqual(contractFixtureFiles().sort());
@@ -98,6 +104,30 @@ describe('contract fixtures', () => {
     }
   });
 
+  it('[FR-IAM-08] the refresh response carries no token in its body', () => {
+    for (const relativePath of contractFixtureFiles().filter((file) => file.startsWith('iam/fixtures/'))) {
+      const body = readFixture(relativePath).response.body;
+      expect(objectKeys(body).filter((key) => key.endsWith('token')),
+        `${relativePath} contains a token field`).toEqual([]);
+    }
+    const refresh = readFixture('iam/fixtures/refresh.success.json').response.body as Record<string, unknown>;
+    expect(refreshResponseSchema.safeParse({ ...refresh, access_token: 'fake-access-token' }).success).toBe(false);
+  });
+
+  it('[NFR-MNT-03] every fixture request body has a request schema', () => {
+    const exceptions = new Map([
+      ['shared/fixtures/validation.error-unprocessable.json', 'request is invalid on purpose; learner schemas come with A05'],
+    ]);
+    for (const [relativePath, entry] of Object.entries(fixtureTable)) {
+      const body = readFixture(relativePath).request.body;
+      if (body === undefined) continue;
+      if (!entry.request) expect(exceptions.has(relativePath), relativePath).toBe(true);
+    }
+    expect(exceptions.get('shared/fixtures/validation.error-unprocessable.json')).toBe(
+      'request is invalid on purpose; learner schemas come with A05',
+    );
+  });
+
   it('[NFR-MNT-03] rejects unknown fields in strict request and response objects', () => {
     const otpSend = readFixture('iam/fixtures/otp-send.success.json').request.body as Record<string, unknown>;
     const me = readFixture('iam/fixtures/me.learner.json').response.body as Record<string, unknown>;
@@ -115,5 +145,11 @@ describe('contract fixtures', () => {
   it('[NFR-MNT-03] rejects Problem Details with a non-numeric status', () => {
     const problem = readFixture('shared/fixtures/resource.error-not-found.json').response.body as Record<string, unknown>;
     expect(problemDetailsSchema.safeParse({ ...problem, status: '404' }).success).toBe(false);
+  });
+
+  it('[NFR-MNT-03] Problem Details status is an integer error code', () => {
+    const problem = readFixture('shared/fixtures/resource.error-not-found.json').response.body as Record<string, unknown>;
+    expect(problemDetailsSchema.safeParse({ ...problem, status: 404.5 }).success).toBe(false);
+    expect(problemDetailsSchema.safeParse({ ...problem, status: 200 }).success).toBe(false);
   });
 });

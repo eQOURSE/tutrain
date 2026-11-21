@@ -105,6 +105,23 @@ function allStrings(value) {
   return strings;
 }
 
+function fixtureSetCookies() {
+  return contractFixtureFiles().flatMap((relativePath) => {
+    const fixture = readJson(path.join('packages/contracts', relativePath));
+    return (fixture.response.headers?.['set-cookie'] ?? []).map((header) => ({ relativePath, header }));
+  });
+}
+
+function parseCookieHeader(header) {
+  const [pair, ...rawAttributes] = header.split(';').map((part) => part.trim());
+  const [name] = pair.split('=', 1);
+  const attributes = new Map(rawAttributes.map((attribute) => {
+    const [key, ...value] = attribute.split('=');
+    return [key.toLowerCase(), value.join('=') || true];
+  }));
+  return { name, attributes };
+}
+
 const expectedGaps = [
   'packages/domain/audit',
   'apps/api/src/modules/<module>',
@@ -250,6 +267,29 @@ test('[NFR-MNT-03] fixtures match endpoint, JSON, money, error, list and fake-id
   const lineTotal = quote.lines.reduce((sum, line) => sum + line.line_total.amount_minor, 0);
   assert.equal(lineTotal, quote.subtotal.amount_minor);
   assert.equal(quote.subtotal.amount_minor - quote.discount.amount_minor + quote.tax.amount_minor, quote.total.amount_minor);
+});
+
+test('[FR-IAM-02] fixture cookies are HttpOnly, Secure and SameSite=Lax and follow the cookie prefix rules', () => {
+  for (const { relativePath, header } of fixtureSetCookies()) {
+    const { name, attributes } = parseCookieHeader(header);
+    assert.ok(attributes.has('httponly'), `${relativePath} ${name} is not HttpOnly`);
+    assert.ok(attributes.has('secure'), `${relativePath} ${name} is not Secure`);
+    assert.equal(attributes.get('samesite'), 'Lax', `${relativePath} ${name} is not SameSite=Lax`);
+    if (name.startsWith('__Host-')) {
+      assert.equal(attributes.get('path'), '/', `${relativePath} ${name} must use Path=/`);
+      assert.equal(attributes.has('domain'), false, `${relativePath} ${name} must not set Domain`);
+    } else if (attributes.get('path') !== '/') {
+      assert.match(name, /^__Secure-/u, `${relativePath} ${name} must use the __Secure- prefix`);
+    }
+  }
+});
+
+test('[FR-IAM-08] a refresh sets a new access cookie and a new refresh cookie', () => {
+  const fixture = readJson('packages/contracts/iam/fixtures/refresh.success.json');
+  assert.deepEqual(fixture.response.headers['set-cookie'], [
+    '__Host-tt_at=fake-rotated-access-token; HttpOnly; Secure; SameSite=Lax; Path=/',
+    '__Secure-tt_rt=fake-rotated-refresh-token; HttpOnly; Secure; SameSite=Lax; Path=/v1/auth',
+  ]);
 });
 
 test('[NFR-MNT-03] ownership document matches JSON and lists all proposals', () => {
