@@ -21,8 +21,14 @@ describe('environment parsing', () => {
     expect(() => parseEnv(schema, { NODE_ENV: 'invalid-environment', PORT: '70000' })).toThrowError(
       /NODE_ENV.*PORT/u,
     );
-    expect(() => parseEnv(schema, { NODE_ENV: 'invalid-environment', PORT: '70000' })).toThrowError(
-      (error: Error) => !error.message.includes('invalid-environment') && !error.message.includes('70000'),
-    );
+    let error: unknown;
+    try {
+      parseEnv(schema, { NODE_ENV: 'invalid-environment', PORT: '70000' });
+    } catch (caught) {
+      error = caught;
+    }
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).not.toContain('invalid-environment');
+    expect((error as Error).message).not.toContain('70000');
   });
 });

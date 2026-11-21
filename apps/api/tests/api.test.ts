@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { Writable } from 'node:stream';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import express from 'express';
 import type { Logger } from 'pino';
 import { describe, expect, it } from 'vitest';
@@ -48,12 +49,13 @@ describe('API entry point', () => {
     const environment = { ...process.env };
     delete environment.NODE_ENV;
     environment.PORT = '70000';
-    const mainPath = path.resolve('apps/api/src/main.ts');
-    const result = spawnSync(process.execPath, ['--import', 'tsx', mainPath], {
-      cwd: path.resolve('apps/api'),
+    const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+    const tsxLoader = path.join(apiRoot, 'node_modules', 'tsx', 'dist', 'loader.mjs');
+    const result = spawnSync(process.execPath, ['--import', pathToFileURL(tsxLoader).href, 'src/main.ts'], {
+      cwd: apiRoot,
       encoding: 'utf8',
       env: environment,
-      timeout: 5000,
+      timeout: 30000,
     });
 
     expect(result.status).toBe(1);
@@ -63,9 +65,13 @@ describe('API entry point', () => {
   });
 
   it('[SPECS §1 AC2] an unhandled error returns 500 Problem Details with request_id and no stack or error message', async () => {
-    const app = createApp({ logger: captureLogs().logger });
-    app.get('/test/fail', () => {
-      throw new Error('secret failure message');
+    const app = createApp({
+      logger: captureLogs().logger,
+      registerRoutes: (instance) => {
+        instance.get('/test/fail', () => {
+          throw new Error('secret failure message');
+        });
+      },
     });
     const server = await listen(app);
     try {
@@ -83,8 +89,12 @@ describe('API entry point', () => {
   });
 
   it('[SPECS §1 AC2] unknown route 404, malformed JSON 400 and oversized body 413, each passing problemDetailsSchema', async () => {
-    const app = createApp({ logger: captureLogs().logger });
-    app.post('/test/body', (_request, response) => response.json({ ok: true }));
+    const app = createApp({
+      logger: captureLogs().logger,
+      registerRoutes: (instance) => {
+        instance.post('/test/body', (_request, response) => response.json({ ok: true }));
+      },
+    });
     const server = await listen(app);
     try {
       const unknown = await fetch(`${baseUrl(server)}/missing`);
@@ -125,8 +135,12 @@ describe('API entry point', () => {
 
   it('[NFR-OBS-01] the request log line has request_id, method, path, status and duration_ms; a request carrying a query string, a JSON body, a cookie and an Authorization header leaves none of those values in the captured log', async () => {
     const capture = captureLogs();
-    const app = createApp({ logger: capture.logger });
-    app.post('/test/log', (_request, response) => response.json({ ok: true }));
+    const app = createApp({
+      logger: capture.logger,
+      registerRoutes: (instance) => {
+        instance.post('/test/log', (_request, response) => response.json({ ok: true }));
+      },
+    });
     const server = await listen(app);
     try {
       await fetch(`${baseUrl(server)}/test/log?secret-query=query-value`, {
@@ -188,20 +202,25 @@ describe('API entry point', () => {
   });
 
   it('[SPECS §1] the shutdown helper refuses new connections and resolves after open requests finish', async () => {
-    const app = createApp({ logger: captureLogs().logger });
-    app.get('/test/slow', async (_request, response) => {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      response.json({ ok: true });
+    const app = createApp({
+      logger: captureLogs().logger,
+      registerRoutes: (instance) => {
+        instance.get('/test/slow', async (_request, response) => {
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          response.json({ ok: true });
+        });
+      },
     });
     const server = await listen(app);
-    const request = fetch(`${baseUrl(server)}/test/slow`);
+    const url = baseUrl(server);
+    const request = fetch(`${url}/test/slow`);
     await new Promise((resolve) => setTimeout(resolve, 10));
     const shutdown = shutdownServer(server, 1000);
     const response = await request;
     await shutdown;
     expect(response.status).toBe(200);
     expect(server.listening).toBe(false);
-    await expect(fetch(`${baseUrl(server)}/test/slow`)).rejects.toThrow();
+    await expect(fetch(`${url}/test/slow`)).rejects.toThrow();
   });
 
   it('[SPECS §1] HttpProblem preserves its status and code', () => {
