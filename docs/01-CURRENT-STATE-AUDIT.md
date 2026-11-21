@@ -1,6 +1,6 @@
 # 01 — Current State Audit
 
-> Scope: `eQOURSE/tutrain-backend`, `eQOURSE/tutrain-frontend`, `bhau23/student-management` as of 23 Oct 2026.
+> Scope: `eQOURSE/tutrain-backend`, `eQOURSE/tutrain-frontend`, and a student-management repository as of 23 Oct 2026.
 > Purpose: record what exists today, what is worth keeping, and what has to change, so the v2 design in the other documents is grounded in the real system.
 
 ---

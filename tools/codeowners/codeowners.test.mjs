@@ -2,13 +2,11 @@ import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const codeownersPath = path.join(repositoryRoot, '.github', 'CODEOWNERS');
-const ownershipPath = path.join(repositoryRoot, 'docs', 'contracts', 'ownership.json');
-
 function read(relativePath) {
   return readFileSync(path.join(repositoryRoot, relativePath), 'utf8');
 }

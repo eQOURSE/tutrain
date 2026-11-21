@@ -210,7 +210,7 @@ Kartik's backend dependencies and Bhavesh's frontend dependencies are intentiona
 - Acceptance: `pnpm dev` starts the API against local PostgreSQL, and CI rejects invalid boundaries.
 - Progress: repository created; documents imported from tutrain-backend 851227b.
 - Progress: workspace, strict TypeScript base, boundary linting and CI are in the `chore/a03-workspace` PR.
-- CODEOWNERS (task 7): uses the two developers' GitHub accounts, mapped from ownership.json's kartik and bhavesh, as Bhavesh Kanoje decided.
+- CODEOWNERS (task 7): the file is generated from docs/contracts/ownership.json in the `chore/a03-codeowners` PR.
 - Repository protection: eQOURSE is on GitHub Free, so the main/develop ruleset is saved but not enforced on this private repository, and Secret Protection isn't available. Until a plan decision, the controls are review by the other developer and the CI checks docs-check and secret-scan. CODEOWNERS will list owners but won't request reviews.
 
 ### Bhavesh tasks
