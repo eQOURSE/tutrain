@@ -11,7 +11,7 @@ Every HTTP endpoint in `apps/api` MUST follow these rules. AI coding agents: tre
 - Money: `{ "amount_minor": 249900, "currency": "INR" }`. Never floats, never formatted strings.
 
 ## 2. Auth
-- Browser apps send the access token cookie (`__Host-tt_at`, HttpOnly, Secure, SameSite=Lax, 15 min) and refresh through `POST /v1/auth/refresh` (refresh cookie scoped to `/v1/auth`).
+- Browser apps send the access token cookie (`__Host-tt_at`, HttpOnly, Secure, SameSite=Lax, 15 min) and refresh through `POST /v1/auth/refresh` using the `__Secure-tt_rt` cookie (HttpOnly, Secure, SameSite=Lax, Path=/v1/auth). It cannot use the `__Host-` prefix because that prefix requires `Path=/`.
 - CSRF: double-submit token header `X-CSRF-Token` on state-changing requests from browsers. Origin check against an allowlist.
 - Server-to-server: `Authorization: Bearer <api_key>` (scoped, hashed at rest) or OAuth client credentials.
 - Webhooks from vendors: verified by provider signature (Razorpay HMAC, Stripe signature) or OIDC JWT (Google Pub/Sub push), with ±5 min replay protection.

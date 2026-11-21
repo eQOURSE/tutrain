@@ -2,7 +2,7 @@
   "request": { "method": "POST", "path": "/v1/auth/refresh" },
   "response": {
     "status": 200,
-    "headers": { "set-cookie": ["__Host-tt_at=fake-rotated-access-token; HttpOnly; Secure; SameSite=Lax; Path=/"] },
-    "body": { "session_id": "session-guardian-001", "access_token": "fake-rotated-access-token", "expires_at": "2026-11-17T10:15:00Z" }
+    "headers": { "set-cookie": ["__Host-tt_at=fake-rotated-access-token; HttpOnly; Secure; SameSite=Lax; Path=/", "__Secure-tt_rt=fake-rotated-refresh-token; HttpOnly; Secure; SameSite=Lax; Path=/v1/auth"] },
+    "body": { "session_id": "session-guardian-001", "expires_at": "2026-11-17T10:15:00Z" }
   }
 }

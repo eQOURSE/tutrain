@@ -15,7 +15,7 @@ export type Money = z.infer<typeof moneySchema>;
 export const problemDetailsSchema = z.strictObject({
   type: z.url(),
   title: z.string(),
-  status: z.number(),
+  status: z.number().int().min(400).max(599),
   code: z.string().regex(/^[A-Z][A-Z0-9_]*$/u),
   detail: z.string(),
   request_id: idSchema,

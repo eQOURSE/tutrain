@@ -9,7 +9,7 @@
     "headers": {
       "set-cookie": [
         "__Host-tt_at=fake-access-token; HttpOnly; Secure; SameSite=Lax; Path=/",
-        "__Host-tt_rt=fake-refresh-token; HttpOnly; Secure; SameSite=Lax; Path=/v1/auth"
+        "__Secure-tt_rt=fake-refresh-token; HttpOnly; Secure; SameSite=Lax; Path=/v1/auth"
       ]
     },
     "body": {

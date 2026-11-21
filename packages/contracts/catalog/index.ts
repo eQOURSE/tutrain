@@ -39,7 +39,6 @@ export type TaxonomyResponse = z.infer<typeof taxonomyResponseSchema>;
 const quoteLineRequestSchema = z.strictObject({
   product_id: idSchema,
   learner_grade: z.string(),
-  custom_allocations: z.array(z.strictObject({ subject_id: idSchema, sessions: z.number().int().positive() })).optional(),
   qty: z.number().int().positive(),
 });
 

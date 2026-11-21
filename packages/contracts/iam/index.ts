@@ -43,7 +43,6 @@ export type OtpVerifyResponse = z.infer<typeof otpVerifyResponseSchema>;
 
 export const refreshResponseSchema = z.strictObject({
   session_id: idSchema,
-  access_token: idSchema,
   expires_at: timestampSchema,
 });
 export type RefreshResponse = z.infer<typeof refreshResponseSchema>;
