@@ -5,15 +5,16 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { Writable } from 'node:stream';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import express, { Router } from 'express';
 import type { Logger } from 'pino';
 import { describe, expect, it } from 'vitest';
-import { healthLiveResponseSchema, problemDetailsSchema } from '@tutrain/contracts/shared';
+import { healthLiveResponseSchema, healthReadyResponseSchema, problemDetailsSchema } from '@tutrain/contracts/shared';
 import { createApp, HttpProblem, shutdownServer } from '../src/app.js';
 import { createLogger } from '../src/logger.js';
 
 type LogCapture = { logger: Logger; text: () => string };
+const localDatabaseUrl = 'postgres://tutrain:tutrain@127.0.0.1:5432/tutrain';
 
 function captureLogs(): LogCapture {
   let output = '';
@@ -66,9 +67,9 @@ describe('API entry point', () => {
     const environment = { ...process.env };
     delete environment.NODE_ENV;
     environment.PORT = '70000';
+    environment.DATABASE_URL = localDatabaseUrl;
     const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-    const tsxLoader = path.join(apiRoot, 'node_modules', 'tsx', 'dist', 'loader.mjs');
-    const result = spawnSync(process.execPath, ['--import', pathToFileURL(tsxLoader).href, 'src/main.ts'], {
+    const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/main.ts'], {
       cwd: apiRoot,
       encoding: 'utf8',
       env: environment,
@@ -86,7 +87,13 @@ describe('API entry point', () => {
     await once(blocker, 'listening');
     const port = (blocker.address() as AddressInfo).port;
     const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-    const environment = { ...process.env, NODE_ENV: 'test', PORT: String(port), LOG_LEVEL: 'info' };
+    const environment = {
+      ...process.env,
+      NODE_ENV: 'test',
+      PORT: String(port),
+      LOG_LEVEL: 'info',
+      DATABASE_URL: localDatabaseUrl,
+    };
     const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/main.ts'], {
       cwd: apiRoot,
       encoding: 'utf8',
@@ -97,6 +104,27 @@ describe('API entry point', () => {
 
     expect(result.status).toBe(1);
     expect(`${result.stdout}${result.stderr}`).not.toContain('API listening');
+  });
+
+  it('[SPECS §1] DATABASE_URL must be a postgres URL and its value never appears in errors', () => {
+    const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+    const environment = {
+      ...process.env,
+      NODE_ENV: 'test',
+      PORT: '3100',
+      LOG_LEVEL: 'info',
+      DATABASE_URL: 'http://user:secret-db-password@localhost/db',
+    };
+    const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/main.ts'], {
+      cwd: apiRoot,
+      encoding: 'utf8',
+      env: environment,
+      timeout: 30000,
+    });
+
+    expect(result.status).toBe(1);
+    expect(`${result.stdout}${result.stderr}`).toMatch(/DATABASE_URL/u);
+    expect(`${result.stdout}${result.stderr}`).not.toContain('secret-db-password');
   });
 
   it('[SPECS §1 AC2] an unhandled error returns 500 Problem Details with request_id and no stack or error message', async () => {
@@ -295,6 +323,50 @@ describe('API entry point', () => {
       expect(response.status).toBe(200);
       expect(response.headers.get('x-powered-by')).toBeNull();
       expect(healthLiveResponseSchema.parse(await response.json())).toEqual({ status: 'ok' });
+    } finally {
+      await close(server);
+    }
+  });
+
+  it('[SPECS §1] GET /v1/health/ready returns 200 when the database is up', async () => {
+    const app = createApp({ logger: captureLogs().logger, checkReadiness: async () => ({ ok: true }) });
+    const server = await listen(app);
+    try {
+      const response = await fetch(`${baseUrl(server)}/v1/health/ready`);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      expect(healthReadyResponseSchema.parse(await response.json())).toEqual({
+        status: 'ok',
+        checks: { database: 'up' },
+      });
+    } finally {
+      await close(server);
+    }
+  });
+
+  it('[SPECS §1] GET /v1/health/ready returns 503 Problem Details when the database is down', async () => {
+    const capture = captureLogs();
+    const app = createApp({
+      logger: capture.logger,
+      checkReadiness: async () => ({ ok: false, error_name: 'ConnectionError', error_code: 'ECONNREFUSED' }),
+    });
+    const server = await listen(app);
+    try {
+      const response = await fetch(`${baseUrl(server)}/v1/health/ready`);
+      const body = await problem(response);
+      expect(response.status).toBe(503);
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      expect(problemDetailsSchema.parse(body)).toMatchObject({
+        code: 'NOT_READY',
+        type: 'https://docs.tutrain.com/errors/not-ready',
+        errors: [{ path: 'database', message: 'unavailable' }],
+      });
+      expect(JSON.stringify(body)).not.toContain('ConnectionError');
+      expect(JSON.stringify(body)).not.toContain('ECONNREFUSED');
+      expect(capture.text()).toContain('readiness_failed');
+      expect(capture.text()).toContain('ConnectionError');
+      expect(capture.text()).toContain('ECONNREFUSED');
+      expect(capture.text()).not.toContain('database secret message');
     } finally {
       await close(server);
     }

@@ -50,6 +50,18 @@ test('[NFR-MNT-01] the root workspace exposes lint, typecheck, test and build sc
   for (const script of ['lint', 'typecheck', 'test', 'build']) assert.equal(typeof manifest.scripts[script], 'string', script);
 });
 
+test('[SPECS §1 AC1] compose.yaml pins PostgreSQL 16 by version and digest and publishes it on 127.0.0.1 only', () => {
+  const manifest = packageJson();
+  const compose = read('compose.yaml');
+
+  assert.equal(manifest.scripts.dev, 'docker compose up -d --wait postgres && pnpm --filter @tutrain/api dev');
+  assert.equal(manifest.scripts['db:up'], 'docker compose up -d --wait postgres');
+  assert.equal(manifest.scripts['dev:api'], 'pnpm --filter @tutrain/api dev');
+  assert.match(compose, /image:\s*postgres:16\.16-alpine@sha256:[0-9a-f]{64}/u);
+  assert.match(compose, /127\.0\.0\.1:5432:5432/u);
+  assert.doesNotMatch(compose, /(^|\n)\s*-\s*5432:5432\s*($|\n)/u);
+});
+
 test('[SPECS §1 AC5] crm importing billing internal fails', () => {
   assertBoundaryFailure('packages/domain/crm/src/import-billing-internal.ts');
 });
